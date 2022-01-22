@@ -1,55 +1,8 @@
 from typing import List
-from constants import CITIES_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY
+from classes.products import Product
+from constants import CITIES_LIST, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY
 
 
-class Game:
-	""" Represents a game of Sea Trader, including the player and world status"""
-
-	def __init__(self):
-		"""
-
-		"""
-		self.player = Player(name="example",
-							 initial_budget=INITIAL_BUDGET,
-							 initial_location="Yafo")
-		self.ship = Ship()
-		self.current_trade_day: int = 0
-		self.hours_left_for_workday: int = 16
-		self.last_trade_day: int = 21
-		self.is_last_trade_day: bool = False
-
-		self.cities_list: List[str] = CITIES_LIST
-		self.start_game()
-
-	def move_to_next_day(self):
-		""" Moves to next day of trade """
-		self.hours_left_for_workday = AMOUNT_OF_HOURS_FOR_WORKDAY
-		self.current_trade_day += 1
-
-		if self.current_trade_day == self.is_last_trade_day:
-			print("This is the last day of trade! Make sure to sell any products left in your ship!")
-			self.is_last_trade_day = True
-
-	def start_game(self):
-		""" Prints details for the first time the game starts """
-		print(f"Welcome aboard {self.player.name}! You are a captain of a trader ship. "
-			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} days! "
-			  f"Good luck! ")
-		return None
-
-	def end_game(self) -> GameResults():
-		""" Prints a message indicating end of game, including the player's score """
-		print(f"Well done captain {self.player.name}! You have earned {self.player.get_current_budget()} coins! ")
-		return GameResults(name=self.player.name,
-						   coins_earned=self.player.get_current_budget(),
-						   amount_of_trade_days=self.current_trade_day)
-
-	def print_current_game_status(self):
-		""" Print the current status of the game including the player's details """
-		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
-		print(f"Current budget is {self.player.get_current_budget()}")
-		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
-		return None
 
 
 class GameResults:
@@ -137,15 +90,79 @@ class Player:
 		return None
 
 
+class Game:
+	""" Represents a game of Sea Trader, including the player and world status"""
+
+	def __init__(self):
+		"""
+
+		"""
+		self.player = Player(name="example",
+							 initial_budget=INITIAL_BUDGET,
+							 initial_location="Yafo")
+		self.ship = Ship()
+		self.current_trade_day: int = 0
+		self.hours_left_for_workday: int = 16
+		self.last_trade_day: int = 21
+		self.is_last_trade_day: bool = False
+
+		self.cities_list: List[str] = CITIES_LIST
+		self.products_list: List[Product] = PRODUCTS_LIST
+		self.start_game_message()
+
+	def start_game(self) -> None:
+		""" Will start a game and manage it until the end """
+		self.start_game_message()
+
+		while self.current_trade_day <= self.last_trade_day:
+			self.print_current_game_status()
+			self.move_to_next_day()
+
+		self.end_game()
+		return None
+
+	def move_to_next_day(self):
+		""" Moves to next day of trade """
+		self.hours_left_for_workday = AMOUNT_OF_HOURS_FOR_WORKDAY
+		self.current_trade_day += 1
+
+		if self.current_trade_day == self.is_last_trade_day:
+			print("This is the last day of trade! Make sure to sell any products left in your ship!")
+			self.is_last_trade_day = True
+
+	def start_game_message(self):
+		""" Prints details for the first time the game starts """
+		print(f"Welcome aboard {self.player.name}! You are a captain of a trader ship. "
+			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} days! "
+			  f"Good luck! ")
+		return None
+
+	def end_game(self) -> GameResults:
+		""" Prints a message indicating end of game, including the player's score.
+
+		:return: Game results which can be recorded in the statistics table
+		 """
+		print(f"Well done captain {self.player.name}! "
+			  f"You have earned {self.player.get_current_budget()} coins! ")
+		return GameResults(name=self.player.name,
+						   coins_earned=self.player.get_current_budget(),
+						   amount_of_trade_days=self.current_trade_day)
+
+	def print_current_game_status(self):
+		""" Print the current status of the game including the player's details """
+		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
+		print(f"Current budget is {self.player.get_current_budget()}")
+		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
+		print(f"Currently you'r ship health is {self.ship.ship_health}")
+		return None
+
+
 def main():
 	""" Will ask player for it's details and will start a game of Sea Trader """
 	print("Welcome to Sea Trader game")
 	print("Sea Trader is a homage to Socher HaYam")
 	game = Game()
-	game.print_current_game_status()
-	game.move_to_next_day()
-	game.print_current_game_status()
-
+	game.start_game()
 
 if __name__ == "__main__":
 	main()
