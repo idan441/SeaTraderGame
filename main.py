@@ -35,15 +35,39 @@ class Game:
 		print(f"Welcome aboard {self.player.name}! You are a captain of a trader ship. "
 			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} days! "
 			  f"Good luck! ")
+		return None
 
-	def end_game(self):
-		pass
+	def end_game(self) -> GameResults():
+		""" Prints a message indicating end of game, including the player's score """
+		print(f"Well done captain {self.player.name}! You have earned {self.player.get_current_budget()} coins! ")
+		return GameResults(name=self.player.name,
+						   coins_earned=self.player.get_current_budget(),
+						   amount_of_trade_days=self.current_trade_day)
 
 	def print_current_game_status(self):
 		""" Print the current status of the game including the player's details """
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
 		print(f"Current budget is {self.player.get_current_budget()}")
 		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
+		return None
+
+
+class GameResults:
+	""" Represents a result for Sea Trader game """
+
+	def __init__(self,
+				 name: str,
+				 coins_earned: int,
+				 amount_of_trade_days: int):
+		"""
+
+		:param name:
+		:param coins_earned:
+		:param amount_of_trade_days:
+		"""
+		self.name: str = name
+		self.coins_earned: int = coins_earned
+		self.amount_of_trade_days: int = amount_of_trade_days
 
 
 class Ship:
@@ -51,6 +75,7 @@ class Ship:
 	Ship status allows player moving between cities. Ship can break which can prevent the player from sailing between
 	cities.
 	"""
+
 	def __init__(self):
 		"""
 
