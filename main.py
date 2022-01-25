@@ -1,6 +1,7 @@
 from typing import List
 from classes.products import Product, PlayersInventory, PlayerProductInventory
-from constants import CITIES_LIST, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY
+from constants import CITIES_LIST, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
+	TIME_TO_SAIL_BETWEEN_CITIES
 
 
 class GameResults:
@@ -102,7 +103,8 @@ class Game:
 		self.ship = Ship()
 		self.current_trade_day: int = 0
 		self.hours_left_for_workday: int = 16
-		self.last_trade_day: int = 21
+		self.time_to_sail_between_cities: int = TIME_TO_SAIL_BETWEEN_CITIES
+		self.last_trade_day: int = 3
 		self.is_last_trade_day: bool = False
 
 		self.cities_list: List[str] = CITIES_LIST
@@ -132,21 +134,53 @@ class Game:
 		"""
 		print("It's morning of a new trade day. ")
 		while True:
-			print("Choose an action:"
-				  "1 - Trade products"
-				  "2 - show inventory"
-				  "3 - Finish trade day")
+			print("Choose an action: "
+				  "1) Trade products "
+				  "2) show inventory "
+				  "3) Sail to a new destination "
+				  "4) Finish trade day ")
 			option_chose: int = int(input())
 			if option_chose == 1:
 				self.trade_products_menu()
 			elif option_chose == 2:
 				self.print_inventory()
 			elif option_chose == 3:
+				self.sail_to_new_destination_menu()
+			elif option_chose == 4:
 				break
 			else:
 				print("Wrong option was chosen - try again")
 
 		print("The trade day has finished, you go to sleep.")
+		return None
+
+	def sail_to_new_destination_menu(self) -> None:
+		""" Manages menu for moving the player between destination - different cities
+
+		:return:
+		"""
+		print(f"You are currently porting at {self.player.current_location()}")
+		print(f"Journey time: {self.time_to_sail_between_cities}")
+		print(f"left hours for workday: {self.hours_left_for_workday}")
+
+		if self.hours_left_for_workday < self.time_to_sail_between_cities:
+			print(f"It is already too late! You can't sail today! ")
+			return None
+
+		while True:
+			print(f"Choose a new destination to sail to: ({self.cities_list})")
+			new_destination: str = input()
+			if new_destination not in self.cities_list:
+				print("Wrong destination name! Try again! ")
+			elif new_destination == self.player.current_location():
+				print("You are already in here!")
+				break
+			else:
+				self.player.set_current_location(new_location=new_destination)
+				self.hours_left_for_workday -= self.time_to_sail_between_cities
+				print(f"You sailed to {new_destination} the journey took you {self.hours_left_for_workday} hours")
+				break
+
 		return None
 
 	def trade_products_menu(self) -> None:
