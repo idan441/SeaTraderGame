@@ -80,7 +80,7 @@ class Player:
 class PlayersTransaction:
 	""" Used to make transactions with player's budget as well as his inventory.
 	Should be used to sell/buy products and changing the player's budget accordingly."""
-	def __init__(self, player: Player, player_inventory: PlayersInventory, prices_in_city: ProductsPricesInCity):
+	def __init__(self, player: Player, player_inventory: PlayersInventory, prices_in_city: ProductsPricesInAllCities):
 		"""
 
 		:param player: A Player object representing the player in the game. The PLayer object represents the player's
@@ -89,7 +89,7 @@ class PlayersTransaction:
 		"""
 		self.player: Player = player
 		self.player_inventory: PlayersInventory = player_inventory
-		self.prices_in_city: ProductsPricesInCity = prices_in_city
+		self.prices_in_city: ProductsPricesInAllCities = prices_in_city
 
 	def check_player_has_enough_budget(self, needed_amount_of_cash: int) -> bool:
 		""" Check if a number, representing a buy transaction, is bigger than the player's budget.
@@ -105,25 +105,31 @@ class PlayersTransaction:
 
 		:return: True on success, in case the player has not enough budget - will return false.
 		"""
-		product_price: int = self.prices_in_city.get_price_for_product(product=product_to_buy.product)
+		prices_in_city: ProductsPricesInCity = \
+			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.current_location())
+
+		product_price: int = prices_in_city.get_price_for_product(product=product_to_buy)
 		cost: int = amount_to_buy * product_price
 		if self.check_player_has_enough_budget(cost):
-			self.player_inventory.add_product_to_inventory(product=product_to_buy.product,
+			self.player_inventory.add_product_to_inventory(product=product_to_buy,
 														   amount_to_add=amount_to_buy)
 			self.player.sub_budget(budget_to_remove=cost)
 			return True
 		return False
 
-	def sell_product(self, product_to_buy: PlayerProductInventory, amount_to_sell: int) -> bool:
+	def sell_product(self, product_to_sell: PlayerProductInventory, amount_to_sell: int) -> bool:
 		""" Will do a sell transaction for a player.
 
 		:return: True on success, in case the player has not enough of the product to sell - will return false.
 		"""
-		product_price: int = self.prices_in_city.get_price_for_product(product=product_to_buy.product)
+		prices_in_city: ProductsPricesInCity = \
+			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.current_location())
+
+		product_price: int = prices_in_city.get_price_for_product(product=product_to_sell)
 		profit: int = amount_to_sell * product_price
-		if self.player_inventory.check_if_amount_of_item_exists_in_inventory(product=product_to_buy.product,
+		if self.player_inventory.check_if_amount_of_item_exists_in_inventory(product=product_to_sell,
 																			 amount=amount_to_sell):
-			self.player_inventory.remove_product_from_inventory(product=product_to_buy.product,
+			self.player_inventory.remove_product_from_inventory(product=product_to_sell,
 														   		amount_to_remove=amount_to_sell)
 			self.player.add_budget(budget_to_add=profit)
 			return True
@@ -255,12 +261,16 @@ class Game:
 
 		if action == "buy":
 			print(f"Buying {amount_to_buy_or_sell} {product_details.product_name}")
-			self.player_inventory.add_product_to_inventory(product=product_details.product,
-														   amount_to_add=amount_to_buy_or_sell)
+			self.product_transactions.buy_product(product_to_buy=product_details.product,
+												  amount_to_buy=amount_to_buy_or_sell)
+			# self.player_inventory.add_product_to_inventory(product=product_details.product,
+			# 											   amount_to_add=amount_to_buy_or_sell)
 		elif action == "sell":
 			print(f"Buying {amount_to_buy_or_sell} {product_details.product_name}")
-			self.player_inventory.remove_product_from_inventory(product=product_details.product,
-																amount_to_remove=amount_to_buy_or_sell)
+			self.product_transactions.sell_product(product_to_sell=product_details.product,
+												   amount_to_sell=amount_to_buy_or_sell)
+			# self.player_inventory.remove_product_from_inventory(product=product_details.product,
+			# 													amount_to_remove=amount_to_buy_or_sell)
 		else:
 			print("Wrong option chosen! Try again...")
 
