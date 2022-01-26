@@ -56,8 +56,11 @@ class PlayersInventory:
 			self.products_inventory_list.append(PlayerProductInventory(product=product,
 																	   amount=initial_amount))
 
-	def get_product_details_in_inventory(self, product_to_get_details_on: Product):
-		""" Returns product details in the inventory"""
+	def get_product_details_in_inventory(self, product_to_get_details_on: Product) -> PlayerProductInventory:
+		""" Returns product details in the inventory
+		# TODO - deal with a case where the product doesn't exist
+		:param product_to_get_details_on:
+		:return: A PlayerProductInventory of the product given"""
 		for product_inventory in self.products_inventory_list:
 			if product_inventory.product_name == product_to_get_details_on.name:
 				return product_inventory
@@ -77,6 +80,19 @@ class PlayersInventory:
 		:return: None
 		"""
 		self.add_product_to_inventory(product=product, amount_to_add=amount_to_remove * (-1))
+
+	def check_if_amount_of_item_exists_in_inventory(self, product: Product, amount: int) -> bool:
+		""" Check if there is a minimum amount of a product in the inventory
+
+		:param product:
+		:param amount: an amount of item to be checked
+		:return: boolean - true if there is enough amount of the product, else false
+		"""
+		product_inventory_details: PlayerProductInventory = \
+			self.get_product_details_in_inventory(product_to_get_details_on=product)
+		if amount <= product_inventory_details.amount:
+			return True
+		return False
 
 	def get_inventory_content(self) -> List[PlayerProductInventory]:
 		""" Returns a list with the inventory content.

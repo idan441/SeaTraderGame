@@ -77,6 +77,59 @@ class Player:
 		return None
 
 
+class PlayersTransaction:
+	""" Used to make transactions with player's budget as well as his inventory.
+	Should be used to sell/buy products and changing the player's budget accordingly."""
+	def __init__(self, player: Player, player_inventory: PlayersInventory, prices_in_city: ProductsPricesInCity):
+		"""
+
+		:param player: A Player object representing the player in the game. The PLayer object represents the player's
+					   current budget
+		:param player_inventory: An object representing the player's inventory in the game.
+		"""
+		self.player: Player = player
+		self.player_inventory: PlayersInventory = player_inventory
+		self.prices_in_city: ProductsPricesInCity = prices_in_city
+
+	def check_player_has_enough_budget(self, needed_amount_of_cash: int) -> bool:
+		""" Check if a number, representing a buy transaction, is bigger than the player's budget.
+
+		:return: Boolean - true if player has enough cash to do a buy transaction
+		"""
+		if needed_amount_of_cash <= self.player.get_current_budget():
+			return True
+		return False
+
+	def buy_product(self, product_to_buy: PlayerProductInventory, amount_to_buy: int):
+		""" Will do a buy transaction for a player.
+
+		:return: True on success, in case the player has not enough budget - will return false.
+		"""
+		product_price: int = self.prices_in_city.get_price_for_product(product=product_to_buy.product)
+		cost: int = amount_to_buy * product_price
+		if self.check_player_has_enough_budget(cost):
+			self.player_inventory.add_product_to_inventory(product=product_to_buy.product,
+														   amount_to_add=amount_to_buy)
+			self.player.sub_budget(budget_to_remove=cost)
+			return True
+		return False
+
+	def sell_product(self, product_to_buy: PlayerProductInventory, amount_to_sell: int) -> bool:
+		""" Will do a sell transaction for a player.
+
+		:return: True on success, in case the player has not enough of the product to sell - will return false.
+		"""
+		product_price: int = self.prices_in_city.get_price_for_product(product=product_to_buy.product)
+		profit: int = amount_to_sell * product_price
+		if self.player_inventory.check_if_amount_of_item_exists_in_inventory(product=product_to_buy.product,
+																			 amount=amount_to_sell):
+			self.player_inventory.remove_product_from_inventory(product=product_to_buy.product,
+														   		amount_to_remove=amount_to_sell)
+			self.player.add_budget(budget_to_add=profit)
+			return True
+		return False
+
+
 class Game:
 	""" Represents a game of Sea Trader, including the player and world status"""
 
@@ -99,6 +152,9 @@ class Game:
 		self.products_list: List[Product] = PRODUCTS_LIST
 		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
 																   products_in_game=self.products_list)
+		self.product_transactions = PlayersTransaction(player=self.player,
+													   player_inventory=self.player_inventory,
+													   prices_in_city=self.products_prices_in_cities)
 
 		self.start_game_message()
 
