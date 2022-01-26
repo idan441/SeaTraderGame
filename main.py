@@ -1,5 +1,7 @@
 from typing import List
 from classes.products import Product, PlayersInventory, PlayerProductInventory
+from classes.ship import Ship
+from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from constants import CITIES_LIST, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TIME_TO_SAIL_BETWEEN_CITIES
 
@@ -20,20 +22,6 @@ class GameResults:
 		self.name: str = name
 		self.coins_earned: int = coins_earned
 		self.amount_of_trade_days: int = amount_of_trade_days
-
-
-class Ship:
-	""" Represents the player's ship.
-	Ship status allows player moving between cities. Ship can break which can prevent the player from sailing between
-	cities.
-	"""
-
-	def __init__(self):
-		"""
-
-		"""
-		self.ship_health: int = 100
-		self.voyage_time: int = 8  # 4 hours to move between every city
 
 
 class Player:
@@ -101,7 +89,7 @@ class Game:
 							 initial_location="Yafo")
 		self.player_inventory = PlayersInventory(products_list_in_game=PRODUCTS_LIST)
 		self.ship = Ship()
-		self.current_trade_day: int = 0
+		self.current_trade_day: int = 1
 		self.hours_left_for_workday: int = 16
 		self.time_to_sail_between_cities: int = TIME_TO_SAIL_BETWEEN_CITIES
 		self.last_trade_day: int = 3
@@ -109,10 +97,16 @@ class Game:
 
 		self.cities_list: List[str] = CITIES_LIST
 		self.products_list: List[Product] = PRODUCTS_LIST
+		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
+																   products_in_game=self.products_list)
+
 		self.start_game_message()
 
 	def start_game(self) -> None:
-		""" Will start a game and manage it until the end """
+		""" Will start a game and manage it until the end
+
+		:return: None
+		"""
 		self.start_game_message()
 
 		while self.is_last_trade_day is not True:
@@ -136,17 +130,20 @@ class Game:
 		while True:
 			print("Choose an action: "
 				  "1) Trade products "
-				  "2) show inventory "
-				  "3) Sail to a new destination "
-				  "4) Finish trade day ")
+				  "2) Show products price "
+				  "3) show inventory "
+				  "4) Sail to a new destination "
+				  "5) Finish trade day ")
 			option_chose: int = int(input())
 			if option_chose == 1:
 				self.trade_products_menu()
 			elif option_chose == 2:
-				self.print_inventory()
+				self.print_products_prices()
 			elif option_chose == 3:
-				self.sail_to_new_destination_menu()
+				self.print_inventory()
 			elif option_chose == 4:
+				self.sail_to_new_destination_menu()
+			elif option_chose == 5:
 				break
 			else:
 				print("Wrong option was chosen - try again")
@@ -215,6 +212,19 @@ class Game:
 
 		return None
 
+	def print_products_prices(self) -> None:
+		""" Prints the products prices in the current city the player is at
+
+		:return:
+		"""
+		current_city_location: str = self.player.current_location()
+		prices_in_city: ProductsPricesInCity = self.products_prices_in_cities.\
+			get_prices_in_city_by_city_name(current_city_location)
+
+		print(f"Prices in {current_city_location}:")
+		print(f"{prices_in_city.get_prices_of_all_products_as_dict()}")
+		return None
+
 	def print_inventory(self) -> None:
 		""" Prints the player's inventory
 
@@ -235,6 +245,7 @@ class Game:
 		 """
 		self.hours_left_for_workday = AMOUNT_OF_HOURS_FOR_WORKDAY
 		self.current_trade_day += 1
+		self.products_prices_in_cities.generate_prices_for_all_cities()
 		return None
 
 	def start_game_message(self):
