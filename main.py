@@ -193,9 +193,10 @@ class Game:
 			print("Choose an action: "
 				  "1) Trade products "
 				  "2) Show products price "
-				  "3) show inventory "
-				  "4) Sail to a new destination "
-				  "5) Finish trade day ")
+				  "3) Show inventory "
+				  "4) Show budget "
+				  "5) Sail to a new destination "
+				  "6) Finish trade day ")
 			option_chose: int = int(input())
 			if option_chose == 1:
 				self.trade_products_menu()
@@ -204,8 +205,10 @@ class Game:
 			elif option_chose == 3:
 				self.print_inventory()
 			elif option_chose == 4:
-				self.sail_to_new_destination_menu()
+				self.print_current_budget()
 			elif option_chose == 5:
+				self.sail_to_new_destination_menu()
+			elif option_chose == 6:
 				break
 			else:
 				print("Wrong option was chosen - try again")
@@ -263,19 +266,23 @@ class Game:
 			print(f"Buying {amount_to_buy_or_sell} {product_details.product_name}")
 			self.product_transactions.buy_product(product_to_buy=product_details.product,
 												  amount_to_buy=amount_to_buy_or_sell)
-			# self.player_inventory.add_product_to_inventory(product=product_details.product,
-			# 											   amount_to_add=amount_to_buy_or_sell)
 		elif action == "sell":
 			print(f"Buying {amount_to_buy_or_sell} {product_details.product_name}")
 			self.product_transactions.sell_product(product_to_sell=product_details.product,
 												   amount_to_sell=amount_to_buy_or_sell)
-			# self.player_inventory.remove_product_from_inventory(product=product_details.product,
-			# 													amount_to_remove=amount_to_buy_or_sell)
 		else:
 			print("Wrong option chosen! Try again...")
 
 		print("You just bought/sold!")
 
+		return None
+
+	def print_current_budget(self) -> None:
+		""" Prints the current player's budget
+
+		:return: None
+		"""
+		print(f"You currently have {self.player.get_current_budget()} coins")
 		return None
 
 	def print_products_prices(self) -> None:
