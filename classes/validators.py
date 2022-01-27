@@ -42,15 +42,3 @@ class UserInput:
 		else:
 			raise ValidationExceptionInputNotInOptionsList(f"Input given {input_value} "
 														   f"is not in the options list: {options_list}")
-
-
-	@staticmethod
-	def is_number_in_range(min_value: int, max_value: int) -> int:
-		"""
-
-		:param min_value:
-		:param max_value:
-		:return:
-		"""
-
-		pass
