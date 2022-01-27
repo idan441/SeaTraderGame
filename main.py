@@ -42,6 +42,7 @@ class Game:
 		self.time_to_sail_between_cities: int = TIME_TO_SAIL_BETWEEN_CITIES
 		self.last_trade_day: int = 3
 		self.is_last_trade_day: bool = False
+		self.is_user_requested_to_finish_game: bool = False
 
 		self.cities_list: List[str] = CITIES_LIST
 		self.products_list: List[Product] = PRODUCTS_LIST
@@ -61,6 +62,9 @@ class Game:
 		self.start_game_message()
 
 		while self.is_last_trade_day is not True:
+			if self.is_user_requested_to_finish_game:
+				print("This will be the last trade day as you requested to end game early! ")
+				break
 			if self.current_trade_day == self.last_trade_day:
 				print("This is the last day of trade! Make sure to sell any products left in your ship!")
 				self.is_last_trade_day = True
@@ -85,7 +89,8 @@ class Game:
 				  "3) Show inventory "
 				  "4) Show budget "
 				  "5) Sail to a new destination "
-				  "6) Finish trade day ")
+				  "6) Finish trade day "
+				  "7) End game ")
 			option_chose: int = int(input())
 
 			if option_chose == 1:
@@ -99,6 +104,9 @@ class Game:
 			elif option_chose == 5:
 				self.sail_to_new_destination_menu()
 			elif option_chose == 6:
+				break
+			elif option_chose == 7:
+				self.player_wisheds_to_end_game()
 				break
 			else:
 				print("Wrong option was chosen - try again")
@@ -144,8 +152,8 @@ class Game:
 		product_name: str = input()
 
 		product_details: PlayerProductInventory = self.player_inventory.get_product_by_name(product_name=product_name)
-		product_price: int = self.products_prices_in_cities.\
-			get_prices_in_city_by_city_name(self.player.current_location())\
+		product_price: int = self.products_prices_in_cities. \
+			get_prices_in_city_by_city_name(self.player.current_location()) \
 			.get_price_for_product(product=product_details.product)
 
 		print(f"You currently have {product_details.amount} of {product_details.product_name}")
@@ -186,7 +194,7 @@ class Game:
 		:return:
 		"""
 		current_city_location: str = self.player.current_location()
-		prices_in_city: ProductsPricesInCity = self.products_prices_in_cities.\
+		prices_in_city: ProductsPricesInCity = self.products_prices_in_cities. \
 			get_prices_in_city_by_city_name(current_city_location)
 
 		print(f"Prices in {current_city_location}:")
@@ -240,6 +248,15 @@ class Game:
 		print(f"Current budget is {self.player.get_current_budget()}")
 		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
 		print(f"Currently you'r ship health is {self.ship.ship_health}")
+		return None
+
+	def player_wisheds_to_end_game(self) -> None:
+		""" Will make the game end by setting the current trade day as the last one.
+		The method will set flag self.is_user_requested_to_finish_game to True
+
+		:return:
+		"""
+		self.is_user_requested_to_finish_game = True
 		return None
 
 
