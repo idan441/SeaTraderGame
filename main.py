@@ -3,8 +3,8 @@ from classes.products import Product, PlayersInventory, PlayerProductInventory
 from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.player import Player, PlayersTransaction
-from constants import CITIES_LIST, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
-	TIME_TO_SAIL_BETWEEN_CITIES
+from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
+	TIME_TO_SAIL_BETWEEN_CITIES, TOTAL_TRADE_DAYS_IN_A_GAME
 
 
 class GameResults:
@@ -28,31 +28,34 @@ class GameResults:
 class Game:
 	""" Represents a game of Sea Trader, including the player and world status"""
 
-	def __init__(self):
+	def __init__(self, player_name: str):
 		"""
 
+		:param player_name: Name of the player, will be used solely for output messages
 		"""
-		self.player = Player(name="example",
-							 initial_budget=INITIAL_BUDGET,
-							 initial_location="Yafo")
-		self.player_inventory = PlayersInventory(products_list_in_game=PRODUCTS_LIST)
-		self.ship = Ship()
-		self.current_trade_day: int = 1
-		self.hours_left_for_workday: int = 16
+		# Set constants - imported from constants.py
+		self.current_trade_day: int = 1  # First day
+		self.hours_left_for_workday: int = AMOUNT_OF_HOURS_FOR_WORKDAY
+		self.last_trade_day: int = TOTAL_TRADE_DAYS_IN_A_GAME
 		self.time_to_sail_between_cities: int = TIME_TO_SAIL_BETWEEN_CITIES
-		self.last_trade_day: int = 3
-		self.is_last_trade_day: bool = False
-		self.is_user_requested_to_finish_game: bool = False
-
 		self.cities_list: List[str] = CITIES_LIST
 		self.products_list: List[Product] = PRODUCTS_LIST
+
+		# Set boolean flags
+		self.is_last_trade_day: bool = False  # Will be set to true when player reaches last trade day
+		self.is_user_requested_to_finish_game: bool = False  # Set in case player wants to finish game immediately
+
+		# Set objects used to represent the player and game environment
+		self.player = Player(name=player_name,
+							 initial_budget=INITIAL_BUDGET,
+							 initial_location=INITIAL_START_CITY)
+		self.player_inventory = PlayersInventory(products_list_in_game=PRODUCTS_LIST)
+		self.ship = Ship()
 		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
 																   products_in_game=self.products_list)
 		self.product_transactions = PlayersTransaction(player=self.player,
 													   player_inventory=self.player_inventory,
 													   prices_in_city=self.products_prices_in_cities)
-
-		self.start_game_message()
 
 	def start_game(self) -> None:
 		""" Will start a game and manage it until the end
@@ -264,7 +267,10 @@ def main():
 	""" Will ask player for it's details and will start a game of Sea Trader """
 	print("Welcome to Sea Trader game")
 	print("Sea Trader is a homage to Socher HaYam")
-	game = Game()
+
+	print("Please enter your name:")
+	player_name: str = input()
+	game = Game(player_name=player_name)
 	game.start_game()
 
 
