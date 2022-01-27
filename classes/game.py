@@ -5,7 +5,7 @@ from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.player import Player, PlayersTransaction
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TIME_TO_SAIL_BETWEEN_CITIES, TOTAL_TRADE_DAYS_IN_A_GAME
-from classes.validators import UserInput
+from input_handling.validators import ValidateUserInput
 
 
 """
@@ -102,7 +102,7 @@ class Game:
 				  "5) Sail to a new destination "
 				  "6) Finish trade day "
 				  "7) End game ")
-			option_chose: int = UserInput.get_input_number(min_value=1, max_value=7)
+			option_chose: int = ValidateUserInput.get_input_number(min_value=1, max_value=7)
 
 			if option_chose == 1:
 				self.trade_products_menu()
@@ -140,7 +140,7 @@ class Game:
 
 		while True:
 			print(f"Choose a new destination to sail to: ({self.cities_list})")
-			new_destination: str = UserInput.input_string_from_options_list(options_list=self.cities_list)
+			new_destination: str = ValidateUserInput.input_string_from_options_list(options_list=self.cities_list)
 			if new_destination not in self.cities_list:
 				print("Wrong destination name! Try again! ")
 			elif new_destination == self.player.current_location():
@@ -160,8 +160,8 @@ class Game:
 		:return: None
 		"""
 		print("Choose a product name to trade")
-		product_name: str = UserInput.input_string_from_options_list(options_list=[product.name for product
-																				   in self.products_list])
+		product_name: str = ValidateUserInput.input_string_from_options_list(options_list=[product.name for product
+																						   in self.products_list])
 
 		product_details: PlayerProductInventory = self.player_inventory.get_product_by_name(product_name=product_name)
 		product_price: int = self.products_prices_in_cities. \
@@ -171,11 +171,11 @@ class Game:
 		print(f"You currently have {product_details.amount} of {product_details.product_name}")
 
 		print("Do you want to buy or sell? (Options - buy or sell)")
-		action: str = UserInput.input_string_from_options_list(options_list=["buy", "sell"])
+		action: str = ValidateUserInput.input_string_from_options_list(options_list=["buy", "sell"])
 
 		print(f"Choose amount you want to {action} "
 			  f"(Current price at {self.player.current_location()} is {product_price})")
-		amount_to_buy_or_sell: int = UserInput.get_input_number()
+		amount_to_buy_or_sell: int = ValidateUserInput.get_input_number()
 
 		if action == "buy":
 			print(f"Buying {amount_to_buy_or_sell} {product_details.product_name}")

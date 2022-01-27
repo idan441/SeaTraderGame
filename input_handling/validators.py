@@ -7,8 +7,8 @@ Will hold objects used for validating inputs of users + input of values in game
 """
 
 
-class UserInput:
-	""" Used to get user input from terminal and validate """
+class ValidateUserInput:
+	""" A collection of static methods used for validating values which are accepted by user input """
 	@staticmethod
 	def get_input_number(min_value: Optional[int] = None, max_value: Optional[int] = None) -> int:
 		""" Will get numeric input from user.
