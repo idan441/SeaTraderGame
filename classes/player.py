@@ -1,5 +1,6 @@
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.products import PlayerProductInventory, PlayersInventory
+from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget
 
 """
 Manages player object + related functionalities
@@ -55,6 +56,10 @@ class Player:
 		:param budget_to_remove:
 		:return:
 		"""
+		if self.budget < budget_to_remove:
+			raise CustomExceptionPlayerHasNotEnoughBudget("Player has not enough budget! "
+														  f"Current budget: {self.budget} , "
+														  f"amount to remove: {budget_to_remove}")
 		self.budget -= budget_to_remove
 		return None
 
@@ -82,7 +87,16 @@ class PlayersTransaction:
 			return True
 		return False
 
-	def buy_product(self, product_to_buy: PlayerProductInventory, amount_to_buy: int):
+	def remove_money_from_player(self, amount_to_remove: int) -> None:
+		""" Will remove money from the player's budget.
+		This will be used to cover extra costs for player not related to products trading - like fixing the ship.
+
+		:return: None, but will raise an exception in case player has not enough budget
+		"""
+		self.player.sub_budget(amount_to_remove)
+		return None
+
+	def buy_product(self, product_to_buy: PlayerProductInventory, amount_to_buy: int) -> bool:
 		""" Will do a buy transaction for a player.
 
 		:return: True on success, in case the player has not enough budget - will return false.

@@ -26,7 +26,7 @@ class Ship:
 		:param max_fix_cost_in_game: Maximum price for fixing the ship in case it breaks
 		:param chance_for_ship_to_break: Chance for the ship to break in every voyage, should be between 0 to 1
 		"""
-		self._is_ship_broken: bool = True
+		self._is_ship_broken: bool = False
 		self._voyage_time: int = voyage_time
 
 		self.fix_cost: int = 0
@@ -57,7 +57,7 @@ class Ship:
 		"""
 		return self._voyage_time
 
-	def do_random_event_damage_ship(self) -> None:
+	def do_random_event_damage_ship(self) -> bool:
 		""" Will do a random event which can break the ship. If ship breaks then the player can't keep sailing between
 		ports until he fixes it. Also in case damage occurs will set a price for fixing the damage.
 
@@ -66,10 +66,10 @@ class Ship:
 		random_break_int: float = random.randint(0, 100) / 100
 		if random_break_int < self.chance_for_ship_to_break:
 			# In case random number is smaller than break chance - break ship
-			self._is_ship_broken = False
+			self._is_ship_broken = True
 			self.fix_cost = random.randint(self.min_fix_cost_in_game, self.max_fix_cost_in_game)
-
-		return None
+			return True
+		return False
 
 	def fix_ship(self) -> None:
 		""" Will fix the ship.
@@ -77,7 +77,7 @@ class Ship:
 
 		:return: None
 		"""
-		self._is_ship_broken = True
+		self._is_ship_broken = False
 		self.fix_cost = 0
 		return None
 

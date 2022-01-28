@@ -6,14 +6,14 @@ from classes.player import Player, PlayersTransaction
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
 	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK
-
 from input_handling.validators import ValidateUserInput
 from input_handling.user_input import UserInput
+from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget
 
 """
 Defines "Game" object representing a whole game of Sea Trader.
 
-Also define "GameResults" object representing the game results
+Also define "GameResults" object representing the game results.
 """
 
 
@@ -107,8 +107,9 @@ class Game:
 					3: "Show inventory",
 					4: "Show budget",
 					5: "Sail to a new destination",
-					6: "Finish trade day",
-					7: "End game",
+					6: "Ship status (fix/improve ship)",
+					7: "Finish trade day",
+					8: "End game",
 				}
 			)
 
@@ -123,8 +124,10 @@ class Game:
 			elif option_chose == 5:
 				self.sail_to_new_destination_menu()
 			elif option_chose == 6:
-				break
+				self.ship_management_menu()
 			elif option_chose == 7:
+				break
+			elif option_chose == 8:
 				self.player_wishes_to_end_game()
 				break
 
@@ -136,28 +139,73 @@ class Game:
 
 		:return: None
 		"""
-		print(f"You are currently porting at {self.player.current_location()}")
-		print(f"Journey time: {self.time_to_sail_between_cities}")
-		print(f"left hours for workday: {self.hours_left_for_workday}")
+		self.print_player_location_and_time_details()
 
 		if self.hours_left_for_workday < self.time_to_sail_between_cities:
 			print(f"It is already too late! You can't sail today! ")
 			return None
+		elif self.ship.is_ship_broken:
+			print("Your ship is broken - you can't sail until it will be fixed!")
+			return None
 
 		while True:
 			print(f"Choose a new destination to sail to: ({self.cities_list})")
-			new_destination: str = ValidateUserInput.input_string_from_options_list(options_list=self.cities_list)
+			STAY_HERE_OPTION: List[str] = ["stay here"]
+			new_destination: str = ValidateUserInput.input_string_from_options_list(
+				options_list=self.cities_list + STAY_HERE_OPTION
+			)
+
+			# Check the player is eligible for the voyage
+			if new_destination == STAY_HERE_OPTION:
+				print(f"You choose to stay at {self.player.current_location()}")
+				break
 			if new_destination not in self.cities_list:
 				print("Wrong destination name! Try again! ")
 			elif new_destination == self.player.current_location():
 				print("You are already in here!")
 				break
+			elif self.ship.is_ship_broken:
+				print("Your ship is broken - you can't sail with it until it will be fixed!")
+				break
+			# In case player is eligible for the voyage
 			else:
+				if self.ship.do_random_event_damage_ship():
+					print("Your ship got broken while doing the journey! "
+						  "You need to fix it in order to be able to set sail again!")
+
 				self.player.set_current_location(new_location=new_destination)
 				self.hours_left_for_workday -= self.time_to_sail_between_cities
-				print(f"You sailed to {new_destination} the journey took you {self.hours_left_for_workday} hours")
+				print(f"You sailed to {new_destination} the journey took you {self.time_to_sail_between_cities} hours")
+
 				break
 
+		return None
+
+	def ship_management_menu(self) -> None:
+		""" Manages menu for player's ship details - status, fix and improve options.
+
+		:return: None
+		"""
+		print("Ship management menu")
+		while True:
+			option_chose: int = UserInput.get_user_number_input_for_menu(
+				prompt_message="Choose an option from these: ",
+				options_dict={
+					1: "Ship status",
+					2: "Fix ship",
+					3: "Upgrade ship",
+					4: "Back to former menu",
+				}
+			)
+
+			if option_chose == 1:
+				self.print_ship_status()
+			elif option_chose == 2:
+				self.fix_ship_menu()
+			elif option_chose == 3:
+				pass
+			elif option_chose == 4:
+				break
 		return None
 
 	def trade_products_menu(self) -> None:
@@ -202,6 +250,55 @@ class Game:
 
 		return None
 
+	def fix_ship_menu(self) -> None:
+		""" Print a menu to manage fix of broken ship
+
+		:return: None
+		"""
+		if not self.ship.is_ship_broken:
+			print("Your ship is healthy, no need to fix it.")
+			return None
+
+		print(f"The cost to fix the ship is {self.ship.fix_cost}")
+
+		is_to_fix: bool = UserInput.get_user_yes_no_input(
+			prompt_message=f"Do you want to fix the ship for {self.ship.fix_cost} coins?"
+		)
+		if is_to_fix:
+			try:
+				self.product_transactions.remove_money_from_player(self.ship.fix_cost)
+				self.ship.fix_ship()
+				print("Your ship is fixed! You can sail again between cities.")
+			except CustomExceptionPlayerHasNotEnoughBudget:
+				print("You don't have enough of money to pay for the cost of fixing ship!")
+
+		return None
+
+	def print_ship_status(self) -> None:
+		""" Prints ship status
+
+		:return: None
+		"""
+		print(f"Your ship is currently at {self.player.current_location()}")
+		print(f"Time to sail between two cities is: {self.ship.voyage_time}")
+		if self.ship.is_ship_broken:
+			print(f"Your ship is broken! You need to fix it in order to be able to sail.")
+			print(f"The cost to fix the ship is {self.ship.fix_cost}")
+		else:
+			print("Your ship is healthy! You can sail to any city you want")
+
+		return None
+
+	def print_player_location_and_time_details(self) -> None:
+		""" Prints the location details - current location of player, time at day, hours left for the day
+
+		:return None
+		"""
+		print(f"You are currently porting at {self.player.current_location()}")
+		print(f"Journey time: {self.time_to_sail_between_cities}")
+		print(f"left hours for workday: {self.hours_left_for_workday}")
+		return None
+
 	def print_current_budget(self) -> None:
 		""" Prints the current player's budget
 
@@ -239,7 +336,7 @@ class Game:
 	def move_to_next_day(self) -> None:
 		""" Moves to next day of trade
 
-		 :return:
+		 :return: None
 		 """
 		self.hours_left_for_workday = AMOUNT_OF_HOURS_FOR_WORKDAY
 		self.current_trade_day += 1
@@ -275,7 +372,8 @@ class Game:
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
 		print(f"Current budget is {self.player.get_current_budget()}")
 		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
-		print(f"Currently you'r ship status is {'functional' if self.ship.is_ship_broken else 'broken'}")
+		if self.ship.is_ship_broken:
+			print(f"You'r ship is broken! You need to fix it in order to be able to sail.")
 		return None
 
 	def player_wishes_to_end_game(self) -> None:
