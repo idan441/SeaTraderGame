@@ -1,6 +1,8 @@
 from typing import List, Dict
 import random
 from classes.products import Product
+from custom_exceptions.city_custom_exceptions import CustomExceptionCityNameNotFound
+from custom_exceptions.product_custom_exceptions import CustomExceptionProductDoesNotExists
 
 
 """
@@ -42,7 +44,10 @@ class ProductsPricesInCity:
 		:param product: A product used in the game
 		:return: int
 		"""
-		return self.products_prices[product]
+		try:
+			return self.products_prices[product]
+		except KeyError:
+			raise CustomExceptionProductDoesNotExists(f"Product {product.name} doesn't exist in player's inventory! ")
 
 	def get_prices_of_all_products_as_dict(self) -> Dict[str, int]:
 		""" Will return a dictionary with all products and their current price.
@@ -87,5 +92,8 @@ class ProductsPricesInAllCities:
 
 		:return: ProductsPricesInCity, representing prices in a specific city
 		"""
-		prices_in_city: ProductsPricesInCity = self.prices_in_cities[city_name]
-		return prices_in_city
+		try:
+			prices_in_city: ProductsPricesInCity = self.prices_in_cities[city_name]
+			return prices_in_city
+		except KeyError:
+			raise CustomExceptionCityNameNotFound(f"City {city_name} doesn't exist!")

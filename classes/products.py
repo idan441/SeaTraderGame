@@ -1,4 +1,5 @@
 from typing import List
+from custom_exceptions.product_custom_exceptions import CustomExceptionProductDoesNotExists
 
 
 class Product:
@@ -58,21 +59,27 @@ class PlayersInventory:
 
 	def get_product_details_in_inventory(self, product_to_get_details_on: Product) -> PlayerProductInventory:
 		""" Returns product details in the inventory
-		# TODO - deal with a case where the product doesn't exist
+
 		:param product_to_get_details_on:
 		:return: A PlayerProductInventory of the product given"""
 		for product_inventory in self.products_inventory_list:
 			if product_inventory.product_name == product_to_get_details_on.name:
 				return product_inventory
+		raise CustomExceptionProductDoesNotExists(f"Product {product_to_get_details_on.name} "
+												  f"doesn't exist in player's inventory! ")
 
 	def add_product_to_inventory(self, product: Product, amount_to_add: int) -> None:
 		""" Adds an amount from a product to the inventory.
 
+		:param product:
+		:param amount_to_add:
 		:return None
 		"""
 		for product_inventory in self.products_inventory_list:
 			if product_inventory.product_name == product.name:
 				product_inventory.amount += amount_to_add
+				return None
+		raise CustomExceptionProductDoesNotExists(f"Product {product.name} doesn't exist in player's inventory! ")
 
 	def remove_product_from_inventory(self, product: Product, amount_to_remove: int) -> None:
 		""" Removes an amount from a product from the inventory.
@@ -104,8 +111,9 @@ class PlayersInventory:
 	def get_product_by_name(self, product_name) -> PlayerProductInventory:
 		""" Returns a product according to it's name.
 
-		:return: PlayerProductInventory object """
-		# TODO - add exception in case wrong name was given!
+		:return: PlayerProductInventory object
+		"""
 		for product_inventory in self.products_inventory_list:
 			if product_inventory.product_name == product_name:
 				return product_inventory
+		raise CustomExceptionProductDoesNotExists(f"Product {product_name} doesn't exist in player's inventory! ")

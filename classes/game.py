@@ -87,10 +87,10 @@ class Game:
 		self.end_game()
 		return None
 
-	def manage_trade_day_menu(self):
+	def manage_trade_day_menu(self) -> None:
 		""" Allows player to manage options of a trade day.
 
-		:return:
+		:return: None
 		"""
 		print("It's morning of a new trade day. ")
 		while True:
@@ -122,8 +122,6 @@ class Game:
 			elif option_chose == 7:
 				self.player_wishes_to_end_game()
 				break
-			else:
-				print("Wrong option was chosen - try again")
 
 		print("The trade day has finished, you go to sleep.")
 		return None
@@ -131,7 +129,7 @@ class Game:
 	def sail_to_new_destination_menu(self) -> None:
 		""" Manages menu for moving the player between destination - different cities
 
-		:return:
+		:return: None
 		"""
 		print(f"You are currently porting at {self.player.current_location()}")
 		print(f"Journey time: {self.time_to_sail_between_cities}")
@@ -168,6 +166,7 @@ class Game:
 		)
 
 		product_details: PlayerProductInventory = self.player_inventory.get_product_by_name(product_name=product_name)
+
 		product_price: int = self.products_prices_in_cities. \
 			get_prices_in_city_by_city_name(self.player.current_location()) \
 			.get_price_for_product(product=product_details.product)
@@ -209,7 +208,7 @@ class Game:
 	def print_products_prices(self) -> None:
 		""" Prints the products prices in the current city the player is at
 
-		:return:
+		:return: None
 		"""
 		current_city_location: str = self.player.current_location()
 		prices_in_city: ProductsPricesInCity = self.products_prices_in_cities. \
@@ -222,11 +221,11 @@ class Game:
 	def print_inventory(self) -> None:
 		""" Prints the player's inventory
 
-		:return None:
+		:return: None
 		"""
 		products_inventory: List[PlayerProductInventory] = self.player_inventory.get_inventory_content()
 
-		print("Current inventory: ")
+		print("Current inventory content: ")
 		for product in products_inventory:
 			print(f"{product.product_name}: {product.amount}")
 
@@ -242,8 +241,11 @@ class Game:
 		self.products_prices_in_cities.generate_prices_for_all_cities()
 		return None
 
-	def start_game_message(self):
-		""" Prints details for the first time the game starts """
+	def start_game_message(self) -> None:
+		""" Prints details for the first time the game starts
+
+		:return: None
+		"""
 		print(f"Welcome aboard {self.player.name}! You are a captain of a trader ship. "
 			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} days! "
 			  f"Good luck! ")
@@ -260,8 +262,11 @@ class Game:
 						   coins_earned=self.player.get_current_budget(),
 						   amount_of_trade_days=self.current_trade_day)
 
-	def print_current_game_status(self):
-		""" Print the current status of the game including the player's details """
+	def print_current_game_status(self) -> None:
+		""" Print the current status of the game including the player's details
+
+		:return: None
+		"""
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
 		print(f"Current budget is {self.player.get_current_budget()}")
 		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
@@ -272,7 +277,7 @@ class Game:
 		""" Will make the game end by setting the current trade day as the last one.
 		The method will set flag self.is_user_requested_to_finish_game to True
 
-		:return:
+		:return: None
 		"""
 		is_to_end_game: bool = UserInput.get_user_yes_no_input(
 			prompt_message="Are you sure you want to finish the game now? ( This will get you to the latest trade day )"
