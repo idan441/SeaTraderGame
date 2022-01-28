@@ -4,7 +4,9 @@ from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.player import Player, PlayersTransaction
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
-	TIME_TO_SAIL_BETWEEN_CITIES, TOTAL_TRADE_DAYS_IN_A_GAME
+	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
+	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK
+
 from input_handling.validators import ValidateUserInput
 from input_handling.user_input import UserInput
 
@@ -45,7 +47,7 @@ class Game:
 		self.current_trade_day: int = 1  # First day
 		self.hours_left_for_workday: int = AMOUNT_OF_HOURS_FOR_WORKDAY
 		self.last_trade_day: int = TOTAL_TRADE_DAYS_IN_A_GAME
-		self.time_to_sail_between_cities: int = TIME_TO_SAIL_BETWEEN_CITIES
+		self.time_to_sail_between_cities: int = SHIP_TIME_TO_SAIL_BETWEEN_CITIES
 		self.cities_list: List[str] = CITIES_LIST
 		self.products_list: List[Product] = PRODUCTS_LIST
 
@@ -58,7 +60,10 @@ class Game:
 							 initial_budget=INITIAL_BUDGET,
 							 initial_location=INITIAL_START_CITY)
 		self.player_inventory = PlayersInventory(products_list_in_game=PRODUCTS_LIST)
-		self.ship = Ship()
+		self.ship = Ship(voyage_time=SHIP_TIME_TO_SAIL_BETWEEN_CITIES,
+						 min_fix_cost_in_game=SHIP_MINIMUM_FIX_COST_IN_GAME,
+						 max_fix_cost_in_game=SHIP_MAXIMUM_FIX_COST_IN_GAME,
+						 chance_for_ship_to_break=CHANCE_FOR_SHIP_TO_BREAK, )
 		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
 																   products_in_game=self.products_list)
 		self.product_transactions = PlayersTransaction(player=self.player,
@@ -270,7 +275,7 @@ class Game:
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
 		print(f"Current budget is {self.player.get_current_budget()}")
 		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
-		print(f"Currently you'r ship health is {self.ship.ship_health}")
+		print(f"Currently you'r ship status is {'functional' if self.ship.is_ship_broken else 'broken'}")
 		return None
 
 	def player_wishes_to_end_game(self) -> None:
