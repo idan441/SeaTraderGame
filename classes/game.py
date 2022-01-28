@@ -121,7 +121,7 @@ class Game:
 			elif option_chose == 6:
 				break
 			elif option_chose == 7:
-				self.player_wisheds_to_end_game()
+				self.player_wishes_to_end_game()
 				break
 			else:
 				print("Wrong option was chosen - try again")
@@ -269,11 +269,15 @@ class Game:
 		print(f"Currently you'r ship health is {self.ship.ship_health}")
 		return None
 
-	def player_wisheds_to_end_game(self) -> None:
+	def player_wishes_to_end_game(self) -> None:
 		""" Will make the game end by setting the current trade day as the last one.
 		The method will set flag self.is_user_requested_to_finish_game to True
 
 		:return:
 		"""
-		self.is_user_requested_to_finish_game = True
+		is_to_end_game: bool = UserInput.get_user_yes_no_input(
+			prompt_message="Are you sure you want to finish the game now? ( This will get you to the latest trade day )"
+		)
+		if is_to_end_game:
+			self.is_user_requested_to_finish_game = True
 		return None

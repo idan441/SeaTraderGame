@@ -18,3 +18,8 @@ class ValidationExceptionInputNotNumeric(Exception):
 class ValidationExceptionInputNotInOptionsList(Exception):
 	""" Raises when a string input is not in given list of options it can be one of. """
 	pass
+
+
+class ValidateExceptionYesNoInputWrongValue(Exception):
+	""" Raises when a string input is not accepted by yes or no input method.
+	Possible inputs for are accepted as variables at input_handling.validators.input_yes_no() method """

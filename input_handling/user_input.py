@@ -1,7 +1,7 @@
 from typing import List, Optional, Dict
 from input_handling.validators import ValidateUserInput
 from custom_exceptions.validator_custom_exceptions import ValidationExceptionInputNotInOptionsList, \
-	ValidationExceptionWrongNumericValue, ValidationExceptionInputNotNumeric
+	ValidationExceptionWrongNumericValue, ValidationExceptionInputNotNumeric, ValidateExceptionYesNoInputWrongValue
 
 """
 UserInput class used to accept user input from terminal
@@ -86,3 +86,24 @@ class UserInput:
 				print(f"Bad input. Value should be one of: {options_dict}")
 			except ValidationExceptionInputNotNumeric:
 				print(f"Bad input. Value needs to be numeric!")
+
+	@staticmethod
+	def get_user_yes_no_input(prompt_message: str) -> bool:
+		""" Will get a yes/no input from the user and will return it as a boolean value.
+
+		Currently supported input options: yes, no, Yes, No, y, n, Y, N
+
+		:param prompt_message: The question to ask the user before accepting the input
+		:return: Boolean
+		"""
+		accepted_yes_values: List[str] = ["y", "Y", "Yes", "yes"]
+		accepted_no_values: List[str] = ["n", "N", "No", "no"]
+
+		print(prompt_message, f"({accepted_yes_values[0]}/{accepted_no_values[0]})")
+		while True:
+			try:
+				user_input: bool = ValidateUserInput.input_yes_no(accepted_yes_values=accepted_yes_values,
+																  accepted_no_values=accepted_no_values)
+				return user_input
+			except ValidateExceptionYesNoInputWrongValue as e:
+				print(e)
