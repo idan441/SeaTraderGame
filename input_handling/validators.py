@@ -30,6 +30,15 @@ class ValidateUserInput:
 		return input_casted_to_int
 
 	@staticmethod
+	def input_string() -> str:
+		""" Accepts input from user. Returns the input as a string without any validation.
+
+		:return: input (str)
+		"""
+		input_value: str = input()
+		return input_value
+
+	@staticmethod
 	def input_string_from_options_list(options_list: List[str]) -> str:
 		""" Accepts input from user. Checks if a string input is one of the given options
 

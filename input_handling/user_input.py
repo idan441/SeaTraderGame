@@ -26,7 +26,10 @@ class UserInput:
 		while True:
 			print(prompt_message, f"( Possible value: {options_list} )" if options_list is not None else "")
 			try:
-				user_input: str = ValidateUserInput.input_string_from_options_list(options_list=options_list)
+				if options_list is not None:
+					user_input: str = ValidateUserInput.input_string_from_options_list(options_list=options_list)
+				else:
+					user_input: str = ValidateUserInput.input_string()
 				return user_input
 			except ValidationExceptionInputNotInOptionsList:
 				print(f"Bad input. Value should be one of: {options_list}")

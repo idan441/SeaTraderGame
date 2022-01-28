@@ -94,11 +94,10 @@ class Game:
 		"""
 		print("It's morning of a new trade day. ")
 		while True:
-
 			option_chose: int = UserInput.get_user_number_input_for_menu(
 				prompt_message="Choose an option from these: ",
 				options_dict={
-					1: "Trade products ",
+					1: "Trade products",
 					2: "Show products price",
 					3: "Show inventory",
 					4: "Show budget",
