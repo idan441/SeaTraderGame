@@ -11,7 +11,7 @@ class ValidateUserInput:
 	""" A collection of static methods used for validating values which are accepted by user input """
 	@staticmethod
 	def get_input_number(min_value: Optional[int] = None, max_value: Optional[int] = None) -> int:
-		""" Will get numeric input from user.
+		""" Accepts input from user. Will get numeric input from user.
 
 		Optional - a min or max value can be specified
 
@@ -31,12 +31,26 @@ class ValidateUserInput:
 
 	@staticmethod
 	def input_string_from_options_list(options_list: List[str]) -> str:
-		""" Checks if a string input is one of the given options
+		""" Accepts input from user. Checks if a string input is one of the given options
 
 		:param options_list: A list of options (str) which can be the input
 		:return: input (str) , in case the input is not one of the options - an exception will raise
 		"""
 		input_value: str = input()
+		if input_value in options_list:
+			return input_value
+		else:
+			raise ValidationExceptionInputNotInOptionsList(f"Input given {input_value} "
+														   f"is not in the options list: {options_list}")
+
+	@staticmethod
+	def input_int_from_options_list(options_list: List[int]) -> int:
+		""" Accepts input from user. Checks if a int input is one of the given options
+
+		:param options_list: A list of options (int) which can be the input
+		:return: input (int) , in case the input is not one of the options - an exception will raise
+		"""
+		input_value: int = ValidateUserInput.get_input_number()
 		if input_value in options_list:
 			return input_value
 		else:
