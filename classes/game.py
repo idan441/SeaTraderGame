@@ -268,7 +268,7 @@ class Game:
 
 		# Make sure player can sell/buy that amount of the product
 		if action == "buy":
-			if transaction_cost > self.player.get_current_budget():
+			if transaction_cost > self.player.budget:
 				print(f"You don't have enough of budget to buy that much {product_details.product_name}")
 				return None
 		elif action == "sell":
@@ -282,7 +282,7 @@ class Game:
 			is_to_buy: bool = UserInput.get_user_yes_no_input(
 				prompt_message=f"Buy {amount_to_buy_or_sell} X {product_details.product_name}? ("
 							   f"Total price {product_price_at_city * amount_to_buy_or_sell} , "
-							   f"will leave you with {self.player.get_current_budget() - (transaction_cost)})"
+							   f"will leave you with {self.player.budget - (transaction_cost)})"
 			)
 			if is_to_buy:
 				self.product_transactions.buy_product(product_to_buy=product_details.product,
@@ -356,7 +356,7 @@ class Game:
 
 		:return: None
 		"""
-		print(f"You currently have {self.player.get_current_budget()} coins")
+		print(f"You currently have {self.player.budget} coins")
 		return None
 
 	def print_products_prices(self) -> None:
@@ -411,9 +411,9 @@ class Game:
 		:return: Game results which can be recorded in the statistics table
 		 """
 		print(f"Well done captain {self.player.name}! "
-			  f"You have earned {self.player.get_current_budget()} coins! ")
+			  f"You have earned {self.player.budget} coins! ")
 		return GameResults(name=self.player.name,
-						   coins_earned=self.player.get_current_budget(),
+						   coins_earned=self.player.budget,
 						   amount_of_trade_days=self.current_trade_day)
 
 	def print_current_game_status(self) -> None:
@@ -422,7 +422,7 @@ class Game:
 		:return: None
 		"""
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
-		print(f"Current budget is {self.player.get_current_budget()}")
+		print(f"Current budget is {self.player.budget}")
 		print(f"Currently you'r ship is anchoring at {self.player.location}")
 		if self.ship.is_ship_broken:
 			print(f"You'r ship is broken! You need to fix it in order to be able to sail.")

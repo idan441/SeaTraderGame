@@ -18,13 +18,6 @@ class Player:
 		self._budget: int = initial_budget
 		self._current_location: str = initial_location
 
-	def get_current_budget(self) -> int:
-		""" Returns current budget
-
-		:return:
-		"""
-		return self._budget
-
 	@property
 	def location(self) -> str:
 		""" Returns the current location of the player
@@ -41,6 +34,14 @@ class Player:
 		:return:
 		"""
 		self._current_location = new_location
+
+	@property
+	def budget(self) -> int:
+		""" Returns player's current budget
+
+		:return:
+		"""
+		return self._budget
 
 	def add_budget(self, budget_to_add: int) -> None:
 		""" Add budget to the player's budget
@@ -68,12 +69,16 @@ class Player:
 class PlayersTransaction:
 	""" Used to make transactions with player's budget as well as his inventory.
 	Should be used to sell/buy products and changing the player's budget accordingly."""
-	def __init__(self, player: Player, player_inventory: PlayersInventory, prices_in_city: ProductsPricesInAllCities):
+	def __init__(self,
+				 player: Player,
+				 player_inventory: PlayersInventory,
+				 prices_in_city: ProductsPricesInAllCities):
 		"""
 
 		:param player: A Player object representing the player in the game. The PLayer object represents the player's
 					   current budget
 		:param player_inventory: An object representing the player's inventory in the game.
+		:param prices_in_city: An object representing the prices for the different products in the different cities
 		"""
 		self.player: Player = player
 		self.player_inventory: PlayersInventory = player_inventory
@@ -82,9 +87,10 @@ class PlayersTransaction:
 	def check_player_has_enough_budget(self, needed_amount_of_cash: int) -> bool:
 		""" Check if a number, representing a buy transaction, is bigger than the player's budget.
 
+		:param needed_amount_of_cash:
 		:return: Boolean - true if player has enough cash to do a buy transaction
 		"""
-		if needed_amount_of_cash <= self.player.get_current_budget():
+		if needed_amount_of_cash <= self.player.budget:
 			return True
 		return False
 
@@ -92,6 +98,7 @@ class PlayersTransaction:
 		""" Will remove money from the player's budget.
 		This will be used to cover extra costs for player not related to products trading - like fixing the ship.
 
+		:param amount_to_remove:
 		:return: None, but will raise an exception in case player has not enough budget
 		"""
 		self.player.sub_budget(amount_to_remove)
@@ -100,6 +107,8 @@ class PlayersTransaction:
 	def buy_product(self, product_to_buy: PlayerProductInventory, amount_to_buy: int) -> bool:
 		""" Will do a buy transaction for a player.
 
+		:param product_to_buy:
+		:param amount_to_buy:
 		:return: True on success, in case the player has not enough budget - will return false.
 		"""
 		prices_in_city: ProductsPricesInCity = \
@@ -117,6 +126,8 @@ class PlayersTransaction:
 	def sell_product(self, product_to_sell: PlayerProductInventory, amount_to_sell: int) -> bool:
 		""" Will do a sell transaction for a player.
 
+		:param product_to_sell:
+		:param amount_to_sell:
 		:return: True on success, in case the player has not enough of the product to sell - will return false.
 		"""
 		prices_in_city: ProductsPricesInCity = \
