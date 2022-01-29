@@ -22,7 +22,9 @@ def main():
 			}
 		)
 		if menu_option_chose == 1:
-			pass
+			print("You are a captain of a trading ship, raging the seven seas. "
+				  "Your task is to get as many coins as you can after the trading season ends! "
+				  "Good luck! ")
 		elif menu_option_chose == 2:
 			player_name: str = UserInput.get_user_string_input(prompt_message="Please enter your name:")
 			game = Game(player_name=player_name)

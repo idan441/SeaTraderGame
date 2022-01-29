@@ -243,6 +243,8 @@ class Game:
 
 		:return: None
 		"""
+		player_location: str = self.player.current_location()
+
 		product_name: str = UserInput.get_user_string_input(
 			prompt_message=f"Choose a product name to {action}",
 			options_list=[product.name for product in self.products_list]
@@ -250,22 +252,23 @@ class Game:
 
 		product_details: PlayerProductInventory = self.player_inventory.get_product_by_name(product_name=product_name)
 
-		product_price: int = self.products_prices_in_cities. \
-			get_prices_in_city_by_city_name(self.player.current_location()) \
+		product_price_at_city: int = self.products_prices_in_cities. \
+			get_prices_in_city_by_city_name(player_location) \
 			.get_price_for_product(product=product_details.product)
 
 		print(f"You currently have {product_details.amount} of {product_details.product_name}")
 
 		amount_to_buy_or_sell: int = UserInput.get_user_numeric_input(
 			prompt_message=f"Choose amount you want to {action} "
-						   f"(Current {product_details.product_name} price at {self.player.current_location()} "
-						   f"is {product_price})",
+						   f"(Current {product_details.product_name} price at {player_location} "
+						   f"is {product_price_at_city})",
 			min_value=0
 		)
+		transaction_cost: int = amount_to_buy_or_sell * product_price_at_city
 
 		# Make sure player can sell/buy that amount of the product
 		if action == "buy":
-			if amount_to_buy_or_sell * product_price > self.player.get_current_budget():
+			if transaction_cost > self.player.get_current_budget():
 				print(f"You don't have enough of budget to buy that much {product_details.product_name}")
 				return None
 		elif action == "sell":
@@ -278,8 +281,8 @@ class Game:
 		if action == "buy":
 			is_to_buy: bool = UserInput.get_user_yes_no_input(
 				prompt_message=f"Buy {amount_to_buy_or_sell} X {product_details.product_name}? ("
-							   f"Total price {product_price * amount_to_buy_or_sell} , "
-							   f"will leave you with {self.player.get_current_budget() - (product_price * amount_to_buy_or_sell)})"
+							   f"Total price {product_price_at_city * amount_to_buy_or_sell} , "
+							   f"will leave you with {self.player.get_current_budget() - (transaction_cost)})"
 			)
 			if is_to_buy:
 				self.product_transactions.buy_product(product_to_buy=product_details.product,
@@ -289,8 +292,8 @@ class Game:
 			is_to_sell: bool = UserInput.get_user_yes_no_input(
 				prompt_message=f"Sell {amount_to_buy_or_sell} X {product_details.product_name}? ("
 							   f"You now have {product_details.amount} {product_details.product_name} and will stay "
-							   f"with {product_details.amount - amount_to_buy_or_sell} {product_details.product_name}. "
-							   f"You will gavin total of {product_price * amount_to_buy_or_sell} coins profit ) "
+							   f"with {product_details.amount - amount_to_buy_or_sell} X {product_details.product_name}. "
+							   f"You will gavin total of {transaction_cost} coins profit ) "
 			)
 			if is_to_sell:
 				self.product_transactions.sell_product(product_to_sell=product_details.product,
