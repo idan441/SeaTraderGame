@@ -124,7 +124,7 @@ class PlayersTransaction:
 			return None
 		else:
 			raise CustomExceptionPlayerHasNotEnoughBudget(f"Player has not enough of budget to buy {amount_to_buy} X "
-														  f"{product_to_buy.product_name} - in a cost of {cost}")
+														  f"{product_to_buy.name} - in a cost of {cost}")
 
 	def sell_product(self, product_to_sell: PlayerProductInventory, amount_to_sell: int) -> None:
 		""" Will do a sell transaction for a player.
@@ -147,5 +147,5 @@ class PlayersTransaction:
 			return None
 		else:
 			raise CustomExceptionsTransactionFailNotEnoughItemAmount(f"Can't do a sell transaction for {amount_to_sell}"
-																	 f" X {product_to_sell.product_name} "
+																	 f" X {product_to_sell.name} "
 																	 f"- because the player has not enough of it. ")

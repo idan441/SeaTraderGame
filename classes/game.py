@@ -267,18 +267,6 @@ class Game:
 		)
 		transaction_cost: int = amount_to_buy_or_sell * product_price_at_city
 
-		# Make sure player can sell/buy that amount of the product
-		if action == "buy":
-			if transaction_cost > self.player.budget:
-				print(f"You don't have enough of budget to buy that much {product_details.product_name}")
-				return None
-		elif action == "sell":
-			if amount_to_buy_or_sell > product_details.amount:
-				print(f"You don't have enough {product_details.product_name} to sell! "
-					  f"( You have {product_details.amount} {product_details.product_name} )")
-				return None
-
-		# Do the transaction
 		if action == "buy":
 			is_to_buy: bool = UserInput.get_user_yes_no_input(
 				prompt_message=f"Buy {amount_to_buy_or_sell} X {product_details.product_name}? ("

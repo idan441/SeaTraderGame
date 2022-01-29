@@ -5,7 +5,10 @@ from custom_exceptions.product_custom_exceptions import CustomExceptionProductDo
 class Product:
 	""" Defines a product which can be traded """
 
-	def __init__(self, name: str, min_price: int, max_price: int):
+	def __init__(self,
+				 name: str,
+				 min_price: int,
+				 max_price: int):
 		"""
 
 		:param name:
@@ -35,7 +38,7 @@ class PlayerProductInventory:
 	def product_name(self) -> str:
 		""" Returns the product name
 
-		:return: Product name
+		:return: Product name (str)
 		"""
 		return self.product.name
 
