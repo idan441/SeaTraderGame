@@ -84,6 +84,8 @@ class PlayersInventory:
 	def remove_product_from_inventory(self, product: Product, amount_to_remove: int) -> None:
 		""" Removes an amount from a product from the inventory.
 
+		:param product:
+		:param amount_to_remove:
 		:return: None
 		"""
 		self.add_product_to_inventory(product=product, amount_to_add=amount_to_remove * (-1))
@@ -111,6 +113,7 @@ class PlayersInventory:
 	def get_product_by_name(self, product_name) -> PlayerProductInventory:
 		""" Returns a product according to it's name.
 
+		:param product_name:
 		:return: PlayerProductInventory object
 		"""
 		for product_inventory in self.products_inventory_list:

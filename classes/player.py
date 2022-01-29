@@ -1,6 +1,7 @@
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.products import PlayerProductInventory, PlayersInventory
-from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget
+from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget, \
+	CustomExceptionsTransactionFailNotEnoughItemAmount
 
 """
 Manages player object + related functionalities
@@ -104,7 +105,7 @@ class PlayersTransaction:
 		self.player.sub_budget(amount_to_remove)
 		return None
 
-	def buy_product(self, product_to_buy: PlayerProductInventory, amount_to_buy: int) -> bool:
+	def buy_product(self, product_to_buy: PlayerProductInventory, amount_to_buy: int) -> None:
 		""" Will do a buy transaction for a player.
 
 		:param product_to_buy:
@@ -120,15 +121,18 @@ class PlayersTransaction:
 			self.player_inventory.add_product_to_inventory(product=product_to_buy,
 														   amount_to_add=amount_to_buy)
 			self.player.sub_budget(budget_to_remove=cost)
-			return True
-		return False
+			return None
+		else:
+			raise CustomExceptionPlayerHasNotEnoughBudget(f"Player has not enough of budget to buy {amount_to_buy} X "
+														  f"{product_to_buy.product_name} - in a cost of {cost}")
 
-	def sell_product(self, product_to_sell: PlayerProductInventory, amount_to_sell: int) -> bool:
+	def sell_product(self, product_to_sell: PlayerProductInventory, amount_to_sell: int) -> None:
 		""" Will do a sell transaction for a player.
 
 		:param product_to_sell:
 		:param amount_to_sell:
-		:return: True on success, in case the player has not enough of the product to sell - will return false.
+		:return: None on success of transaction, in case the player has not enough of the product to sell - will raise
+		         an exception
 		"""
 		prices_in_city: ProductsPricesInCity = \
 			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.location)
@@ -140,5 +144,8 @@ class PlayersTransaction:
 			self.player_inventory.remove_product_from_inventory(product=product_to_sell,
 														   		amount_to_remove=amount_to_sell)
 			self.player.add_budget(budget_to_add=profit)
-			return True
-		return False
+			return None
+		else:
+			raise CustomExceptionsTransactionFailNotEnoughItemAmount(f"Can't do a sell transaction for {amount_to_sell}"
+																	 f" X {product_to_sell.product_name} "
+																	 f"- because the player has not enough of it. ")

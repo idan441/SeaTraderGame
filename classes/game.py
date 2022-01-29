@@ -8,7 +8,8 @@ from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BU
 	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK
 from input_handling.validators import ValidateUserInput
 from input_handling.user_input import UserInput
-from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget
+from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget, \
+	CustomExceptionsTransactionFailNotEnoughItemAmount
 
 """
 Defines "Game" object representing a whole game of Sea Trader.
@@ -285,9 +286,13 @@ class Game:
 							   f"will leave you with {self.player.budget - (transaction_cost)})"
 			)
 			if is_to_buy:
-				self.product_transactions.buy_product(product_to_buy=product_details.product,
-													  amount_to_buy=amount_to_buy_or_sell)
-			print(f"You just bought {amount_to_buy_or_sell} X {product_details.product_name}!")
+				try:
+					self.product_transactions.buy_product(product_to_buy=product_details.product,
+														  amount_to_buy=amount_to_buy_or_sell)
+					print(f"You just bought {amount_to_buy_or_sell} X {product_details.product_name}!")
+				except CustomExceptionPlayerHasNotEnoughBudget:
+					print(f"You don't have enough of budget to buy that much {product_details.product_name}")
+
 		elif action == "sell":
 			is_to_sell: bool = UserInput.get_user_yes_no_input(
 				prompt_message=f"Sell {amount_to_buy_or_sell} X {product_details.product_name}? ("
@@ -296,9 +301,13 @@ class Game:
 							   f"You will gavin total of {transaction_cost} coins profit ) "
 			)
 			if is_to_sell:
-				self.product_transactions.sell_product(product_to_sell=product_details.product,
-													   amount_to_sell=amount_to_buy_or_sell)
-			print(f"You just sold {amount_to_buy_or_sell} X {product_details.product_name}!")
+				try:
+					self.product_transactions.sell_product(product_to_sell=product_details.product,
+														   amount_to_sell=amount_to_buy_or_sell)
+					print(f"You just sold {amount_to_buy_or_sell} X {product_details.product_name}!")
+				except CustomExceptionsTransactionFailNotEnoughItemAmount:
+					print(f"You don't have enough {product_details.product_name} to sell! "
+						  f"( You have {product_details.amount} {product_details.product_name} )")
 
 		return None
 
