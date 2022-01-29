@@ -1,9 +1,10 @@
 from typing import List
-from custom_exceptions.product_custom_exceptions import CustomExceptionProductDoesNotExists
+from custom_exceptions.product_custom_exceptions import CustomExceptionProductDoesNotExists, \
+	CustomExceptionProductMinPriceIsBiggerThanMaxPrice, CustomExceptionProductHasEmptyName
 
 
 class Product:
-	""" Defines a product which can be traded """
+	""" Defines a product which can be traded in game"""
 
 	def __init__(self,
 				 name: str,
@@ -15,6 +16,13 @@ class Product:
 		:param min_price: Min price which the item can be traded at
 		:param max_price: Max price which the item can be traded at
 		"""
+		if min_price > max_price:
+			raise CustomExceptionProductMinPriceIsBiggerThanMaxPrice(f"Product {name} is having wrong price values!"
+																	 f"Minimum price should not be smaller/equals to "
+																	 f"max price!")
+		if name == "":
+			raise CustomExceptionProductHasEmptyName("Product has an empty name! Must not have an empty name!")
+
 		self.name: str = name
 		self.min_price: int = min_price
 		self.max_price: int = max_price

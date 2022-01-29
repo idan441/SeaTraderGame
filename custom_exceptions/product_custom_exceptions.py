@@ -5,6 +5,17 @@ Contains custom exceptions used by all products related class objects
 """
 
 
+# Exceptions when trying to create a product with wrong values
+class CustomExceptionProductMinPriceIsBiggerThanMaxPrice(Exception):
+	""" Raises when trying to create a product with a minimum price bigger than maximum price """
+	pass
+
+
+class CustomExceptionProductHasEmptyName(Exception):
+	""" Raises when trying to create a product with an empty name """
+	pass
+
+
 class CustomExceptionProductDoesNotExists(Exception):
 	""" Raises when trying to search or use a product which doesn't exist in game """
 	pass
