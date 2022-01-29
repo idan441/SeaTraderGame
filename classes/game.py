@@ -157,11 +157,11 @@ class Game:
 
 			# Check the player is eligible for the voyage
 			if new_destination == STAY_HERE_OPTION:
-				print(f"You choose to stay at {self.player.current_location()}")
+				print(f"You choose to stay at {self.player.location}")
 				break
 			if new_destination not in self.cities_list:
 				print("Wrong destination name! Try again! ")
-			elif new_destination == self.player.current_location():
+			elif new_destination == self.player.location:
 				print("You are already in here!")
 				break
 			elif self.ship.is_ship_broken:
@@ -173,7 +173,7 @@ class Game:
 					print("Your ship got broken while doing the journey! "
 						  "You need to fix it in order to be able to set sail again!")
 
-				self.player.set_current_location(new_location=new_destination)
+				self.player.location = new_destination
 				self.hours_left_for_workday -= self.time_to_sail_between_cities
 				print(f"You sailed to {new_destination} the journey took you {self.time_to_sail_between_cities} hours")
 
@@ -243,7 +243,7 @@ class Game:
 
 		:return: None
 		"""
-		player_location: str = self.player.current_location()
+		player_location: str = self.player.location
 
 		product_name: str = UserInput.get_user_string_input(
 			prompt_message=f"Choose a product name to {action}",
@@ -331,7 +331,7 @@ class Game:
 
 		:return: None
 		"""
-		print(f"Your ship is currently at {self.player.current_location()}")
+		print(f"Your ship is currently at {self.player.location}")
 		print(f"Time to sail between two cities is: {self.ship.voyage_time}")
 		if self.ship.is_ship_broken:
 			print(f"Your ship is broken! You need to fix it in order to be able to sail.")
@@ -346,7 +346,7 @@ class Game:
 
 		:return None
 		"""
-		print(f"You are currently porting at {self.player.current_location()}")
+		print(f"You are currently porting at {self.player.location}")
 		print(f"Journey time: {self.time_to_sail_between_cities}")
 		print(f"left hours for workday: {self.hours_left_for_workday}")
 		return None
@@ -364,7 +364,7 @@ class Game:
 
 		:return: None
 		"""
-		current_city_location: str = self.player.current_location()
+		current_city_location: str = self.player.location
 		prices_in_city: ProductsPricesInCity = self.products_prices_in_cities. \
 			get_prices_in_city_by_city_name(current_city_location)
 
@@ -423,7 +423,7 @@ class Game:
 		"""
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
 		print(f"Current budget is {self.player.get_current_budget()}")
-		print(f"Currently you'r ship is anchoring at {self.player.current_location()}")
+		print(f"Currently you'r ship is anchoring at {self.player.location}")
 		if self.ship.is_ship_broken:
 			print(f"You'r ship is broken! You need to fix it in order to be able to sail.")
 		return None

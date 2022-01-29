@@ -15,7 +15,7 @@ class Player:
 
 		"""
 		self.name: str = name
-		self.budget: int = initial_budget
+		self._budget: int = initial_budget
 		self._current_location: str = initial_location
 
 	def get_current_budget(self) -> int:
@@ -23,23 +23,24 @@ class Player:
 
 		:return:
 		"""
-		return self.budget
+		return self._budget
 
-	def current_location(self) -> str:
+	@property
+	def location(self) -> str:
 		""" Returns the current location of the player
 
 		:return:
 		"""
 		return self._current_location
 
-	def set_current_location(self, new_location: str) -> None:
+	@location.setter
+	def location(self, new_location: str):
 		""" Sets the players location
 
 		:param new_location:
 		:return:
 		"""
 		self._current_location = new_location
-		return None
 
 	def add_budget(self, budget_to_add: int) -> None:
 		""" Add budget to the player's budget
@@ -47,7 +48,7 @@ class Player:
 		:param budget_to_add:
 		:return:
 		"""
-		self.budget += budget_to_add
+		self._budget += budget_to_add
 		return None
 
 	def sub_budget(self, budget_to_remove: int) -> None:
@@ -56,11 +57,11 @@ class Player:
 		:param budget_to_remove:
 		:return:
 		"""
-		if self.budget < budget_to_remove:
+		if self._budget < budget_to_remove:
 			raise CustomExceptionPlayerHasNotEnoughBudget("Player has not enough budget! "
-														  f"Current budget: {self.budget} , "
+														  f"Current budget: {self._budget} , "
 														  f"amount to remove: {budget_to_remove}")
-		self.budget -= budget_to_remove
+		self._budget -= budget_to_remove
 		return None
 
 
@@ -102,7 +103,7 @@ class PlayersTransaction:
 		:return: True on success, in case the player has not enough budget - will return false.
 		"""
 		prices_in_city: ProductsPricesInCity = \
-			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.current_location())
+			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.location)
 
 		product_price: int = prices_in_city.get_price_for_product(product=product_to_buy)
 		cost: int = amount_to_buy * product_price
@@ -119,7 +120,7 @@ class PlayersTransaction:
 		:return: True on success, in case the player has not enough of the product to sell - will return false.
 		"""
 		prices_in_city: ProductsPricesInCity = \
-			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.current_location())
+			self.prices_in_city.get_prices_in_city_by_city_name(city_name=self.player.location)
 
 		product_price: int = prices_in_city.get_price_for_product(product=product_to_sell)
 		profit: int = amount_to_sell * product_price
