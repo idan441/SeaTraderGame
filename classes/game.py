@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from classes.products import Product, PlayersInventory, PlayerProductInventory
 from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
@@ -213,8 +213,38 @@ class Game:
 
 		:return: None
 		"""
+		while True:
+			option_chose: int = UserInput.get_user_number_input_for_menu(
+				prompt_message="Choose an option from these: ",
+				options_dict={
+					1: "Buy products",
+					2: "Sell products",
+					3: "Show inventory",
+					4: "Show current budget",
+					5: "Back to former menu",
+				}
+			)
+
+			if option_chose == 1:
+				self.buy_sell_product_menu(action="buy")
+			elif option_chose == 2:
+				self.buy_sell_product_menu(action="sell")
+			elif option_chose == 3:
+				self.print_inventory()
+			elif option_chose == 4:
+				self.print_current_budget()
+			elif option_chose == 5:
+				break
+
+		return None
+
+	def buy_sell_product_menu(self, action: str = Union["buy", "sell"]) -> None:
+		""" Menu for buying or selling a single product from the player's inventory
+
+		:return: None
+		"""
 		product_name: str = UserInput.get_user_string_input(
-			prompt_message="Choose a product name to trade",
+			prompt_message=f"Choose a product name to {action}",
 			options_list=[product.name for product in self.products_list]
 		)
 
@@ -226,27 +256,46 @@ class Game:
 
 		print(f"You currently have {product_details.amount} of {product_details.product_name}")
 
-		action: str = UserInput.get_user_string_input(
-			prompt_message="Do you want to buy or sell?",
-			options_list=["buy", "sell"]
-		)
-
 		amount_to_buy_or_sell: int = UserInput.get_user_numeric_input(
 			prompt_message=f"Choose amount you want to {action} "
-						   f"(Current price at {self.player.current_location()} is {product_price})",
+						   f"(Current {product_details.product_name} price at {self.player.current_location()} "
+						   f"is {product_price})",
 			min_value=0
 		)
 
+		# Make sure player can sell/buy that amount of the product
 		if action == "buy":
-			print(f"Buying {amount_to_buy_or_sell} {product_details.product_name}")
-			self.product_transactions.buy_product(product_to_buy=product_details.product,
-												  amount_to_buy=amount_to_buy_or_sell)
+			if amount_to_buy_or_sell * product_price > self.player.get_current_budget():
+				print(f"You don't have enough of budget to buy that much {product_details.product_name}")
+				return None
 		elif action == "sell":
-			print(f"Selling {amount_to_buy_or_sell} {product_details.product_name}")
-			self.product_transactions.sell_product(product_to_sell=product_details.product,
-												   amount_to_sell=amount_to_buy_or_sell)
+			if amount_to_buy_or_sell > product_details.amount:
+				print(f"You don't have enough {product_details.product_name} to sell! "
+					  f"( You have {product_details.amount} {product_details.product_name} )")
+				return None
 
-		print("You just bought/sold!")
+		# Do the transaction
+		if action == "buy":
+			is_to_buy: bool = UserInput.get_user_yes_no_input(
+				prompt_message=f"Buy {amount_to_buy_or_sell} X {product_details.product_name}? ("
+							   f"Total price {product_price * amount_to_buy_or_sell} , "
+							   f"will leave you with {self.player.get_current_budget() - (product_price * amount_to_buy_or_sell)})"
+			)
+			if is_to_buy:
+				self.product_transactions.buy_product(product_to_buy=product_details.product,
+													  amount_to_buy=amount_to_buy_or_sell)
+			print(f"You just bought {amount_to_buy_or_sell} X {product_details.product_name}!")
+		elif action == "sell":
+			is_to_sell: bool = UserInput.get_user_yes_no_input(
+				prompt_message=f"Sell {amount_to_buy_or_sell} X {product_details.product_name}? ("
+							   f"You now have {product_details.amount} {product_details.product_name} and will stay "
+							   f"with {product_details.amount - amount_to_buy_or_sell} {product_details.product_name}. "
+							   f"You will gavin total of {product_price * amount_to_buy_or_sell} coins profit ) "
+			)
+			if is_to_sell:
+				self.product_transactions.sell_product(product_to_sell=product_details.product,
+													   amount_to_sell=amount_to_buy_or_sell)
+			print(f"You just sold {amount_to_buy_or_sell} X {product_details.product_name}!")
 
 		return None
 
