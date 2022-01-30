@@ -4,6 +4,7 @@ from custom_exceptions.ship_custom_exceptions import CustomExceptionWrongVoyageT
 
 
 class TestShipClass(unittest.TestCase):
+	""" Will test Ship class """
 	def test_ship_upgrade(self):
 		""" Test ship upgrade
 

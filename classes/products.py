@@ -52,7 +52,7 @@ class PlayerProductInventory:
 
 
 class PlayersInventory:
-	""" Defines the player's inventory - what products he hold and in which quantity
+	""" Defines the player's inventory - which will details what products player holds and in which quantity
 		# TODO - add in the future a transaction history
 	"""
 
