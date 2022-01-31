@@ -72,7 +72,8 @@ class PlayersInventory:
 		""" Returns product details in the inventory
 
 		:param product_to_get_details_on:
-		:return: A PlayerProductInventory of the product given"""
+		:return: A PlayerProductInventory of the product given
+		"""
 		for product_inventory in self.products_inventory_list:
 			if product_inventory.product_name == product_to_get_details_on.name:
 				return product_inventory
@@ -121,7 +122,7 @@ class PlayersInventory:
 		"""
 		return self.products_inventory_list
 
-	def get_product_by_name(self, product_name) -> PlayerProductInventory:
+	def get_product_by_name(self, product_name: str) -> PlayerProductInventory:
 		""" Returns a product according to it's name.
 
 		:param product_name:

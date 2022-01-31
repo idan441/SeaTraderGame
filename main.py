@@ -8,7 +8,7 @@ def main():
 	:return:
 	"""
 	print("Welcome to Sea Trader game")
-	print("Sea Trader is a homage to Socher HaYam")
+	print("Sea Trader is a homage to the famous game 'Socher HaYam'")
 
 	while True:
 		menu_option_chose: int = UserInput.get_user_number_input_for_menu(
@@ -26,7 +26,8 @@ def main():
 				  "Your task is to get as many coins as you can after the trading season ends! "
 				  "Good luck! ")
 		elif menu_option_chose == 2:
-			player_name: str = UserInput.get_user_string_input(prompt_message="Please enter your name:")
+			player_name: str = UserInput.get_user_string_input(prompt_message="Please enter your name:",
+															   is_none_allowed=False)
 			game = Game(player_name=player_name)
 			game.start_game()
 		elif menu_option_chose == 3:

@@ -1,7 +1,10 @@
 from typing import List, Optional, Dict
 from input_handling.validators import ValidateUserInput
 from custom_exceptions.validator_custom_exceptions import ValidationExceptionInputNotInOptionsList, \
-	ValidationExceptionWrongNumericValue, ValidationExceptionInputNotNumeric, ValidateExceptionYesNoInputWrongValue
+	ValidationExceptionWrongNumericValue, ValidationExceptionInputNotNumeric, ValidateExceptionYesNoInputWrongValue, \
+	ValidateExceptionInputIsEmpty
+from input_handling.text_formatter import FormatOutput
+
 
 """
 UserInput class used to accept user input from terminal
@@ -16,11 +19,14 @@ class UserInput:
 		pass
 
 	@staticmethod
-	def get_user_string_input(prompt_message: str, options_list: Optional[List[str]] = None) -> str:
+	def get_user_string_input(prompt_message: str,
+							  options_list: Optional[List[str]] = None,
+							  is_none_allowed: bool = False) -> str:
 		""" Will get a user string input from terminal.
 
 		:param prompt_message: The question to ask the user before accepting the input
 		:param options_list: Optional - a list of values which the input should be one of
+		:param is_none_allowed: Optional - can a null string be accepted, default: False
 		:return: input (str)
 		"""
 		while True:
@@ -29,10 +35,12 @@ class UserInput:
 				if options_list is not None:
 					user_input: str = ValidateUserInput.input_string_from_options_list(options_list=options_list)
 				else:
-					user_input: str = ValidateUserInput.input_string()
+					user_input: str = ValidateUserInput.input_string(is_none_allowed=is_none_allowed)
 				return user_input
 			except ValidationExceptionInputNotInOptionsList:
 				print(f"Bad input. Value should be one of: {options_list}")
+			except ValidateExceptionInputIsEmpty:
+				print(f"Bad input. Value must not be empty! ")
 
 	@staticmethod
 	def get_user_numeric_input(prompt_message: str,
@@ -81,12 +89,16 @@ class UserInput:
 			print(f"{key} - {value}")
 
 		while True:
-			print(f"Choose a number: ( Possible value: {options_dict.keys()} )")
+			options_list_text_formatted: str = FormatOutput.return_options_list_as_string(
+				options_list=list(options_dict.keys())
+			)
+			print(f"Choose a number: ( Possible value: {options_list_text_formatted} )")
 			try:
-				user_input: int = ValidateUserInput.input_int_from_options_list(options_list=[key for key in options_dict.keys()])
+				user_input: int = ValidateUserInput.input_int_from_options_list(
+					options_list=[key for key in options_dict.keys()])
 				return user_input
 			except ValidationExceptionInputNotInOptionsList:
-				print(f"Bad input. Value should be one of: {options_dict}")
+				print(f"Bad input. Value should be one of: {options_list_text_formatted}")
 			except ValidationExceptionInputNotNumeric:
 				print(f"Bad input. Value needs to be numeric!")
 

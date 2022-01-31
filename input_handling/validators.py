@@ -1,6 +1,9 @@
 from typing import List, Optional
 from custom_exceptions.validator_custom_exceptions import ValidationExceptionWrongNumericValue, \
-	ValidationExceptionInputNotNumeric, ValidationExceptionInputNotInOptionsList, ValidateExceptionYesNoInputWrongValue
+	ValidationExceptionInputNotNumeric, ValidationExceptionInputNotInOptionsList, \
+	ValidateExceptionYesNoInputWrongValue, ValidateExceptionInputIsEmpty
+from input_handling.text_formatter import FormatOutput
+
 
 """
 Will hold objects used for validating inputs of users + input of values in game
@@ -30,12 +33,15 @@ class ValidateUserInput:
 		return input_casted_to_int
 
 	@staticmethod
-	def input_string() -> str:
+	def input_string(is_none_allowed: bool = False) -> str:
 		""" Accepts input from user. Returns the input as a string without any validation.
 
-		:return: input (str)
+		:param is_none_allowed: Optional - can a null string be accepted, default: False
+		:return: input (str) , in case is_none_allows=True and input is empty - an exception will be raised
 		"""
 		input_value: str = input()
+		if not is_none_allowed and input_value == "":
+			raise ValidateExceptionInputIsEmpty("Input value must not be null!")
 		return input_value
 
 	@staticmethod
@@ -82,5 +88,8 @@ class ValidateUserInput:
 		elif input_value in accepted_no_values:
 			return False
 		else:
+			accepted_values: str = FormatOutput.return_options_list_as_string(
+				options_list=accepted_yes_values + accepted_no_values
+			)
 			raise ValidateExceptionYesNoInputWrongValue(f"Wrong value given for yes/no - "
-														f"possible values: {accepted_yes_values + accepted_no_values}")
+														f"possible values: {accepted_values})")
