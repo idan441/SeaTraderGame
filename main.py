@@ -9,6 +9,24 @@ def main():
 	"""
 	print("Welcome to Sea Trader game")
 	print("Sea Trader is a homage to the famous game 'Socher HaYam'")
+	print("""
+	*******************************************
+	*                                         *
+	*          **        *          *         *
+	*         * *      * *        * *         *
+	*        *  *     *  *      * * *         *
+	*       *   *    *   *          *         *
+	*      *    *   *    *        * *         *
+	*     * * * *  * * * *      * * *         *
+	*           *        *          *         *
+	*  *************************************  *
+	*     ****  ****  ****  ****  ******      *
+	*       **  ****  ****  ****  ****        *
+	*        ************************         *
+	*                                         *
+	*******************************************
+	
+	""")
 
 	while True:
 		menu_option_chose: int = UserInput.get_user_number_input_for_menu(
@@ -17,8 +35,7 @@ def main():
 				1: "Introduction & instructions",
 				2: "Start game",
 				3: "High scores",
-				4: "Credits",
-				5: "Exit",
+				4: "Exit",
 			}
 		)
 		if menu_option_chose == 1:
@@ -33,8 +50,6 @@ def main():
 		elif menu_option_chose == 3:
 			print("Here will be high scores table")
 		elif menu_option_chose == 4:
-			print("Programming: Idan")
-		elif menu_option_chose == 5:
 			break
 
 
