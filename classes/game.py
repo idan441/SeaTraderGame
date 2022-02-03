@@ -3,6 +3,7 @@ from classes.products import Product, PlayersInventory, PlayerProductInventory
 from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.player import Player, PlayersTransaction
+from highscores.game_results import GameResults
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
 	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK
@@ -16,24 +17,6 @@ Defines "Game" object representing a whole game of Sea Trader.
 
 Also define "GameResults" object representing the game results.
 """
-
-
-class GameResults:
-	""" Represents a result for Sea Trader game """
-
-	def __init__(self,
-				 name: str,
-				 coins_earned: int,
-				 amount_of_trade_days: int):
-		"""
-
-		:param name:
-		:param coins_earned:
-		:param amount_of_trade_days:
-		"""
-		self.name: str = name
-		self.coins_earned: int = coins_earned
-		self.amount_of_trade_days: int = amount_of_trade_days
 
 
 class Game:
