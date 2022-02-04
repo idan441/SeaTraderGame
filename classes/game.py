@@ -3,7 +3,7 @@ from classes.products import Product, PlayersInventory, PlayerProductInventory
 from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.player import Player, PlayersTransaction
-from highscores.game_results import GameResults
+from highscores.game_results import GameResult
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
 	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK
@@ -14,8 +14,6 @@ from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHas
 
 """
 Defines "Game" object representing a whole game of Sea Trader.
-
-Also define "GameResults" object representing the game results.
 """
 
 
@@ -385,16 +383,14 @@ class Game:
 			  f"Good luck! ")
 		return None
 
-	def end_game(self) -> GameResults:
+	def end_game(self) -> None:
 		""" Prints a message indicating end of game, including the player's score.
 
-		:return: Game results which can be recorded in the statistics table
+		:return: None
 		 """
 		print(f"Well done captain {self.player.name}! "
 			  f"You have earned {self.player.budget} coins! ")
-		return GameResults(name=self.player.name,
-						   coins_earned=self.player.budget,
-						   amount_of_trade_days=self.current_trade_day)
+		return None
 
 	def print_current_game_status(self) -> None:
 		""" Print the current status of the game including the player's details
@@ -420,3 +416,13 @@ class Game:
 		if is_to_end_game:
 			self.is_user_requested_to_finish_game = True
 		return None
+
+	@property
+	def game_results(self) -> GameResult:
+		""" Returns the game results which can be recorded in the statistics table
+
+		:return: GameResult object
+		"""
+		return GameResult(name=self.player.name,
+						  coins_earned=self.player.budget,
+						  amount_of_trade_days=self.current_trade_day)

@@ -1,23 +1,35 @@
-
+from typing import Optional
+from datetime import datetime
 
 """
-Contains GameResults object which represents a single result of the game
+Contains GameResult object which represents a single result of the game
 """
 
 
-class GameResults:
+class GameResult:
 	""" Represents a result for Sea Trader game """
 
 	def __init__(self,
 				 name: str,
 				 coins_earned: int,
-				 amount_of_trade_days: int):
+				 amount_of_trade_days: int,
+				 game_datetime: datetime = datetime.now()):
 		"""
 
-		:param name:
-		:param coins_earned:
-		:param amount_of_trade_days:
+		:param name: player's name
+		:param coins_earned: coins earned at end of game. (Profit)
+		:param amount_of_trade_days: Number of trade days in game
+		:param game_datetime: datetime when the game finished, else will take current datetime as default value
 		"""
 		self.name: str = name
 		self.coins_earned: int = coins_earned
 		self.amount_of_trade_days: int = amount_of_trade_days
+		self.game_datetime: datetime = game_datetime
+
+	def __str__(self) -> str:
+		""" Prints a formatted string with the game score
+
+		:return: str
+		"""
+		return f"Game score: player {self.name} has scored {self.coins_earned} in {self.amount_of_trade_days} days. " \
+			   f"( Game time is {str(self.game_datetime).split('.')[0]} )"
