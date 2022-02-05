@@ -1,6 +1,6 @@
 from typing import List
 from highscores.manage_high_scores_file import HighScores
-from highscores.game_results import GameResult
+from highscores.game_result import GameResult
 from input_handling.user_input import UserInput
 
 

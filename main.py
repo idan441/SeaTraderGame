@@ -1,9 +1,9 @@
 from classes.game import Game
 from input_handling.user_input import UserInput
 from highscores.manage_high_scores_file import HighScores
-from highscores.game_results import GameResult
+from highscores.game_result import GameResult
 from game_menus.manage_highscores_menu import HighScoresMenu
-from game_menus.into_menu_art import print_ship_art
+from game_menus.into_message import print_game_intro
 
 
 def main():
@@ -11,9 +11,7 @@ def main():
 
 	:return:
 	"""
-	print("Welcome to Sea Trader game")
-	print("Sea Trader is a homage to the famous game 'Socher HaYam'")
-	print_ship_art()
+	print_game_intro()
 
 	game_high_scores = HighScores()
 	high_scores_menu = HighScoresMenu(high_scores=game_high_scores)
@@ -37,10 +35,10 @@ def main():
 															   is_none_allowed=False)
 			game = Game(player_name=player_name)
 			game.start_game()
-			game_result: GameResult = game.game_results
 
+			# Get game results - and save them
+			game_result: GameResult = game.game_results
 			game_high_scores.add_new_game_result(game_result=game_result)
-			game_high_scores.update_game_results_file()
 		elif menu_option_chosen == 3:
 			high_scores_menu.manage_high_scores_menu()
 		elif menu_option_chosen == 4:

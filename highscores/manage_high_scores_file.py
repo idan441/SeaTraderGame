@@ -2,7 +2,7 @@ from typing import List, Dict, Union
 import json
 from datetime import datetime
 from pathlib import Path
-from highscores.game_results import GameResult
+from highscores.game_result import GameResult
 from constants import GAME_HIGH_SCORES_FILE_PATH
 
 """
@@ -143,13 +143,6 @@ class HighScores:
 		self.manage_high_scores_file_helper = ManageHighScoresFile()
 		self.get_game_results_from_file()
 
-	def load_game_results_from_json_text(self, game_results_as_json_text: str):
-		""" Will take a JSON string containing games high-scores and will parse it to the class object
-
-		:param game_results_as_json_text:
-		:return: None
-		"""
-
 	@property
 	def game_results(self) -> List[GameResult]:
 		""" Returns a list with games high-scores
@@ -183,11 +176,14 @@ class HighScores:
 		return game_results_ordered_by_date
 
 	def add_new_game_result(self, game_result: GameResult) -> None:
-		""" Will add a game result to the high-scores
+		""" Will add a game result to the high-scores. Als will update the high scores file so the result will be shown
+		in future when the game is running.
 
 		:return: None
 		"""
 		self._game_results.append(game_result)
+		self.update_game_results_file()
+		return None
 
 	def update_game_results_file(self) -> None:
 		""" Updates the game results in a physical file on the machine so it will be kept for future games.
@@ -201,3 +197,4 @@ class HighScores:
 		""" Will get the history of game scores from the file containing them.
 		File is kept at the computer """
 		self._game_results: List[GameResult] = self.manage_high_scores_file_helper.get_high_scores_from_file()
+		return None
