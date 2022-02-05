@@ -16,10 +16,15 @@ PRODUCTS_LIST: List[Product] = [
 
 INITIAL_BUDGET: int = 10000
 
+# Game length time -
 AMOUNT_OF_HOURS_FOR_WORKDAY: int = 16
 TOTAL_TRADE_DAYS_IN_A_GAME: int = 3
 
+# Player ship settings -
 SHIP_TIME_TO_SAIL_BETWEEN_CITIES: int = 8
 SHIP_MINIMUM_FIX_COST_IN_GAME: int = 100
 SHIP_MAXIMUM_FIX_COST_IN_GAME: int = 500
 CHANCE_FOR_SHIP_TO_BREAK: float = 0.05  # Should be between 0 and 1
+
+# High-scores file ( If doesn't exist - game will create one automatically )
+GAME_HIGH_SCORES_FILE_PATH: str = "/tmp/sea_trader_high_scores.json"

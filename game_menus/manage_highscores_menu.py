@@ -1,4 +1,6 @@
+from typing import List
 from highscores.manage_high_scores_file import HighScores
+from highscores.game_results import GameResult
 from input_handling.user_input import UserInput
 
 
@@ -35,7 +37,7 @@ class HighScoresMenu:
 			if option_chosen == 1:
 				self.print_game_high_scores_ordered_by_amount_of_cash()
 			elif option_chosen == 2:
-				print("To add")
+				self.print_game_high_scores_ordered_by_date()
 			elif option_chosen == 3:
 				print("To add")
 			elif option_chosen == 4:
@@ -47,11 +49,28 @@ class HighScoresMenu:
 
 		:return: None
 		"""
-		print(self.high_scores.get_game_results_ordered_by_score())
+		self.print_games_high_score_table_formatted(
+			game_results_list=self.high_scores.get_game_results_ordered_by_score()
+		)
+		return None
 
 	def print_game_high_scores_ordered_by_date(self) -> None:
 		""" Will print the game scores history, ordered by game date in ascending order
 
 		:return: None
 		"""
-		print(self.high_scores.get_game_results_ordered_by_date())
+		self.print_games_high_score_table_formatted(
+			game_results_list=self.high_scores.get_game_results_ordered_by_date()
+		)
+		return None
+
+	@staticmethod
+	def print_games_high_score_table_formatted(game_results_list: List[GameResult]) -> None:
+		""" Will print the game high scores table to the terminal formatted
+
+		:return: None
+		"""
+		for game_result in game_results_list:
+			print(game_result)
+
+		return None
