@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Union
 from datetime import datetime
 
 """
@@ -33,3 +33,17 @@ class GameResult:
 		"""
 		return f"Game score: player {self.name} has scored {self.coins_earned} in {self.amount_of_trade_days} days. " \
 			   f"( Game time is {str(self.game_datetime).split('.')[0]} )"
+
+	def get_game_result_as_dict(self) -> Dict[str, Union[str, int, datetime]]:
+		""" Will return a dictionary with the game result
+		Used by HighScoresMenu to print the game high-scores
+
+		:return: Dict
+		"""
+		game_result: Dict[str, Union[str, int, datetime]] = {
+			"Name": self.name,
+			"Coins earned": self.coins_earned,
+			"Amount of trade days": self.amount_of_trade_days,
+			"Game date": self.game_datetime
+		}
+		return game_result

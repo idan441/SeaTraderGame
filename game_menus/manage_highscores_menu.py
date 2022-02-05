@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Dict
+from tabulate import tabulate
 from highscores.manage_high_scores_file import HighScores
 from highscores.game_result import GameResult
 from input_handling.user_input import UserInput
@@ -70,7 +71,7 @@ class HighScoresMenu:
 
 		:return: None
 		"""
-		for game_result in game_results_list:
-			print(game_result)
+		game_results: List[Dict] = [game_result.get_game_result_as_dict() for game_result in game_results_list]
+		print(tabulate(tabular_data=game_results, headers="keys"))
 
 		return None
