@@ -8,7 +8,6 @@ logger.setLevel(logging.DEBUG)
 #
 # # define file handler and set formatter
 file_handler = logging.FileHandler('logfile.log')
-# formatter = logging.Formatter('aaaaaa %(asctime)s : %(levelname)s : %(name)s : %(message)s')
 logger_format: str = json.dumps({"module_name": "%(name)s",
 								 "date": "%(asctime)s",
 								 "log_level": "%(levelname)s",
@@ -21,7 +20,7 @@ logger.addHandler(file_handler)
 
 logger.setLevel(logging.DEBUG)
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 from classes.game import Game
 from input_handling.user_input import UserInput
