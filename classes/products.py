@@ -1,6 +1,10 @@
+import logging
 from typing import List
 from custom_exceptions.product_custom_exceptions import CustomExceptionProductDoesNotExists, \
 	CustomExceptionProductMinPriceIsBiggerThanMaxPrice, CustomExceptionProductHasEmptyName
+
+
+logger = logging.getLogger(__name__)
 
 
 class Product:
@@ -27,6 +31,13 @@ class Product:
 		self.min_price: int = min_price
 		self.max_price: int = max_price
 
+	def __str__(self) -> str:
+		""" Will print a string representing the product details
+
+		:return:
+		"""
+		return f"Product {self.name} - min price: {self.min_price} , max price: {self.max_price}"
+
 
 class PlayerProductInventory:
 	""" Defines a products in the player's inventory including its amount """
@@ -41,6 +52,14 @@ class PlayerProductInventory:
 		"""
 		self.product: Product = product
 		self.amount: int = amount
+
+	def __str__(self) -> str:
+		""" Will print a string representing the product details in a player inventory
+
+		:return:
+		"""
+		return f"Player inventory: product {self.product.name} - , amount in player inventory: {self.amount} ," \
+			   f"product prices range: min {self.product.min_price} - max {self.product.max_price}"
 
 	@property
 	def product_name(self) -> str:
@@ -131,4 +150,5 @@ class PlayersInventory:
 		for product_inventory in self.products_inventory_list:
 			if product_inventory.product_name == product_name:
 				return product_inventory
+		logger.error(f"Failed in searching for product with name {product_name} in the player inventory")
 		raise CustomExceptionProductDoesNotExists(f"Product {product_name} doesn't exist in player's inventory! ")

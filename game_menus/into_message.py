@@ -1,3 +1,7 @@
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 """
@@ -14,6 +18,7 @@ def print_game_intro() -> None:
 	print("Welcome to Sea Trader game")
 	print("Sea Trader is a homage to the famous game 'Socher HaYam'")
 	print_ship_art()
+	logger.debug("Game started - printed intro message")
 	return None
 
 

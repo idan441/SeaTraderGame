@@ -1,7 +1,12 @@
+import logging
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
 from classes.products import PlayerProductInventory, PlayersInventory
 from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget, \
 	CustomExceptionsTransactionFailNotEnoughItemAmount
+
+
+logger = logging.getLogger(__name__)
+
 
 """
 Manages player object + related functionalities
@@ -18,6 +23,9 @@ class Player:
 		self.name: str = name
 		self._budget: int = initial_budget
 		self._current_location: str = initial_location
+
+		logger.info(f"Initiated player for the game with following details - "
+					f"name: {self.name} , budget: {self._budget} , current_location: {self._current_location}")
 
 	@property
 	def location(self) -> str:
@@ -50,7 +58,9 @@ class Player:
 		:param budget_to_add:
 		:return:
 		"""
+		logger.debug(f"Will change player budget - current budget {self._budget} , should add {budget_to_add}")
 		self._budget += budget_to_add
+		logger.debug(f"Changed player budget is {self._budget}")
 		return None
 
 	def sub_budget(self, budget_to_remove: int) -> None:
@@ -59,11 +69,13 @@ class Player:
 		:param budget_to_remove:
 		:return:
 		"""
+		logger.debug(f"Changed player budget - current budget {self._budget} , should remove {budget_to_remove}")
 		if self._budget < budget_to_remove:
 			raise CustomExceptionPlayerHasNotEnoughBudget("Player has not enough budget! "
 														  f"Current budget: {self._budget} , "
 														  f"amount to remove: {budget_to_remove}")
 		self._budget -= budget_to_remove
+		logger.debug(f"Changed player budget - new budget {self._budget}")
 		return None
 
 

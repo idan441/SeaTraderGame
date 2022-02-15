@@ -1,4 +1,5 @@
 from typing import List, Union
+import logging
 from classes.products import Product, PlayersInventory, PlayerProductInventory
 from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
@@ -15,6 +16,8 @@ from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHas
 """
 Defines "Game" object representing a whole game of Sea Trader.
 """
+
+logger = logging.getLogger(__name__)
 
 
 class Game:
@@ -247,6 +250,9 @@ class Game:
 			min_value=0
 		)
 		transaction_cost: int = amount_to_buy_or_sell * product_price_at_city
+
+		logger.info(f"User requested to {action}: item {product_details.product_name} , "
+					f"amount {amount_to_buy_or_sell}, price {product_price_at_city}")
 
 		if action == "buy":
 			is_to_buy: bool = UserInput.get_user_yes_no_input(

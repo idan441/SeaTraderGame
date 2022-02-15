@@ -1,9 +1,14 @@
+import logging
 from typing import List, Dict, Union
 import json
 from datetime import datetime
 from pathlib import Path
 from highscores.game_result import GameResult
 from constants import GAME_HIGH_SCORES_FILE_PATH
+
+
+logger = logging.getLogger(__name__)
+
 
 """
 Contains functionality for managing the high scores table
@@ -59,8 +64,8 @@ class ManageHighScoresFile:
 			file_content: str = self.high_scores_file.read_text()
 			game_high_scores_as_json = json.loads(file_content)
 		except FileNotFoundError:
-			print(f"Couldn't find a game high-scores file at {self.high_scores_file_path} - "
-				  f"will not return high-scores details")
+			logger.info(f"Couldn't find a game high-scores file at {self.high_scores_file_path} - "
+				  f"will not return high-scores details!")
 		return game_high_scores_as_json
 
 	def get_high_scores_from_file(self) -> List[GameResult]:
@@ -71,8 +76,8 @@ class ManageHighScoresFile:
 		game_high_scores_as_json = self.read_high_scores_data_from_file()
 		games_results: List[GameResult] = []
 
-		try:
-			for game_result_details_in_json in game_high_scores_as_json:
+		for game_result_details_in_json in game_high_scores_as_json:
+			try:
 				name: str = game_result_details_in_json[HighScoresFileFieldsNames.NAME]
 				coins_earned: int = game_result_details_in_json[HighScoresFileFieldsNames.COINS_EARNED]
 				amount_of_trade_days: int = game_result_details_in_json[HighScoresFileFieldsNames.AMOUNT_OF_TRADE_DAYS]
@@ -84,8 +89,10 @@ class ManageHighScoresFile:
 							   amount_of_trade_days=amount_of_trade_days,
 							   game_datetime=game_datetime)
 				)
-		except Exception as e:
-			print(f"no results in file or bad format! {e}")
+			except Exception as e:
+				logger.error(f"Failed reading game high score! Reason: no results in file or bad format! "
+							 f"returned error: {e} , "
+							 f"failed reading this details: {game_result_details_in_json}")
 
 		return games_results
 
@@ -107,6 +114,8 @@ class ManageHighScoresFile:
 		)
 		with self.high_scores_file.open("w", encoding="utf-8") as file:
 			file.write(game_results_as_text_string)
+
+		logger.info(f"Successfully updated the game high scores file at: {self.high_scores_file_path}")
 		return None
 
 	@staticmethod
@@ -149,6 +158,7 @@ class HighScores:
 
 		:return: List[GameResult]
 		"""
+		logger.info(f"Current game results: {self._game_results}")
 		return self._game_results
 
 	def get_game_results_ordered_by_score(self) -> List[GameResult]:
@@ -157,7 +167,7 @@ class HighScores:
 		:return: A list of all game results ordered by cash profit
 		"""
 		game_results_ordered_by_coins_earned: List[GameResult] = sorted(
-			self._game_results,
+			self.game_results,
 			key=lambda game_result: game_result.coins_earned,
 			reverse=True
 		)
@@ -169,7 +179,7 @@ class HighScores:
 		:return: A list of all game results ordered by game dates
 		"""
 		game_results_ordered_by_date: List[GameResult] = sorted(
-			self._game_results,
+			self.game_results,
 			key=lambda game_result: game_result.game_datetime,
 			reverse=True
 		)

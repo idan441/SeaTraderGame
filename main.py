@@ -1,3 +1,28 @@
+import logging
+import json
+
+logger = logging.getLogger(__name__)
+
+# # set log level
+logger.setLevel(logging.DEBUG)
+#
+# # define file handler and set formatter
+file_handler = logging.FileHandler('logfile.log')
+# formatter = logging.Formatter('aaaaaa %(asctime)s : %(levelname)s : %(name)s : %(message)s')
+logger_format: str = json.dumps({"module_name": "%(name)s",
+								 "date": "%(asctime)s",
+								 "log_level": "%(levelname)s",
+								 "message": "%(message)s"})
+formatter = logging.Formatter(logger_format)
+file_handler.setFormatter(formatter)
+
+# add file handler to logger
+logger.addHandler(file_handler)
+
+logger.setLevel(logging.DEBUG)
+
+logger = logging.getLogger(__name__)
+
 from classes.game import Game
 from input_handling.user_input import UserInput
 from highscores.manage_high_scores_file import HighScores
@@ -38,6 +63,7 @@ def main():
 
 			# Get game results - and save them
 			game_result: GameResult = game.game_results
+			logger.info(f"Finished a game - with results: {game_result}")
 			game_high_scores.add_new_game_result(game_result=game_result)
 		elif menu_option_chosen == 3:
 			high_scores_menu.manage_high_scores_menu()

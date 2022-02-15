@@ -1,5 +1,9 @@
+import logging
 import random
 from custom_exceptions.ship_custom_exceptions import CustomExceptionWrongVoyageTimeValueForShip
+
+
+logger = logging.getLogger(__name__)
 
 
 """
@@ -33,6 +37,13 @@ class Ship:
 		self.min_fix_cost_in_game: int = min_fix_cost_in_game
 		self.max_fix_cost_in_game: int = max_fix_cost_in_game
 		self.chance_for_ship_to_break: float = chance_for_ship_to_break
+
+		logger.info(f"Initiated player ship with following details - "
+					f"fix cost: {self.fix_cost} "
+					f"min_fix_cost_in_game: {self.min_fix_cost_in_game} "
+					f"max_fix_cost_in_game: {self.max_fix_cost_in_game} "
+					f"chance_for_ship_to_break: {self.chance_for_ship_to_break} "
+					f"voyage time: {self._voyage_time}")
 
 	def __str__(self) -> str:
 		"""
@@ -68,6 +79,7 @@ class Ship:
 			# In case random number is smaller than break chance - break ship
 			self._is_ship_broken = True
 			self.fix_cost = random.randint(self.min_fix_cost_in_game, self.max_fix_cost_in_game)
+			logger.info(f"Ship broke - cost fix: {self.fix_cost} , chance to break: {self.chance_for_ship_to_break}")
 			return True
 		return False
 
@@ -79,6 +91,7 @@ class Ship:
 		"""
 		self._is_ship_broken = False
 		self.fix_cost = 0
+		logger.debug("Ship fixed by player!")
 		return None
 
 	def upgrade_ship_voyage_time(self, new_voyage_time: int) -> None:
@@ -90,6 +103,8 @@ class Ship:
 		if new_voyage_time < self._voyage_time:
 			self._voyage_time = new_voyage_time
 		else:
-			raise CustomExceptionWrongVoyageTimeValueForShip(f"Wrong voyage time given ({new_voyage_time}) - should be"
-															 f"smaller than current voyage time ({self._voyage_time})")
+			error_message: str = f"Wrong voyage time given ({new_voyage_time}) - should be"\
+								 f"smaller than current voyage time ({self._voyage_time})"
+			logger.error(error_message)
+			raise CustomExceptionWrongVoyageTimeValueForShip(error_message)
 		return None
