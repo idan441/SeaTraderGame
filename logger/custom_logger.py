@@ -1,24 +1,31 @@
 import logging
 import json
-
+from constants import GAME_LOGS_FILE_PATH
 
 """
 Defines a logger configurations for the game
 """
 
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
-#
-#
-# dict = json.dumps({"module_name": "%(name)s",
-# 				   "date": "%(asctime)s",
-# 				   "log_level": "%(levelname)s",
-# 				   "message": "%(message)s"})
-#
-# log_formatter = logging.Formatter(dict)
-#
-# file_handler = logging.FileHandler("game_logs.log")
-# file_handler.setFormatter(log_formatter)
-# file_handler.setLevel(logging.DEBUG)
-#
-# logger.addHandler(file_handler)
+
+def configure_logger():
+	""" Will configure the logging module to use a JSON customized logging
+
+	:return: None
+	"""
+	logger_format: str = json.dumps(
+		{
+			"module_name": "%(name)s",
+			"date": "%(asctime)s",
+			"log_level": "%(levelname)s",
+			"message": "%(message)s"
+		}
+	)
+
+	logging.basicConfig(
+		filename=GAME_LOGS_FILE_PATH,
+		format=logger_format,
+		level=logging.INFO,
+		datefmt="%Y-%m-%d %H:%M:%S",
+	)
+
+	return None

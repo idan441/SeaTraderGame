@@ -1,35 +1,17 @@
 import logging
-import json
-
-logger = logging.getLogger(__name__)
-
-# # set log level
-logger.setLevel(logging.DEBUG)
-#
-# # define file handler and set formatter
-file_handler = logging.FileHandler('logfile.log')
-logger_format: str = json.dumps({"module_name": "%(name)s",
-								 "date": "%(asctime)s",
-								 "log_level": "%(levelname)s",
-								 "message": "%(message)s"})
-formatter = logging.Formatter(logger_format)
-file_handler.setFormatter(formatter)
-
-# add file handler to logger
-logger.addHandler(file_handler)
-
-logger.setLevel(logging.DEBUG)
-
-# logger = logging.getLogger(__name__)
-
 from classes.game import Game
 from input_handling.user_input import UserInput
 from highscores.manage_high_scores_file import HighScores
 from highscores.game_result import GameResult
 from game_menus.manage_highscores_menu import HighScoresMenu
 from game_menus.into_message import print_game_intro
+from logger.custom_logger import configure_logger
 
 
+logger = logging.getLogger(__name__)
+
+
+# Main
 def main():
 	""" Will ask player for it's details and will start a game of Sea Trader
 
@@ -71,4 +53,5 @@ def main():
 
 
 if __name__ == "__main__":
+	configure_logger()
 	main()

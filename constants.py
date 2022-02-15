@@ -29,4 +29,5 @@ CHANCE_FOR_SHIP_TO_BREAK: float = 0.05  # Should be between 0 and 1
 # High-scores file ( If doesn't exist - game will create one automatically )
 GAME_HIGH_SCORES_FILE_PATH: str = "/tmp/sea_trader_high_scores.json"
 
+# Logging file
 GAME_LOGS_FILE_PATH: str = "/tmp/sear_trader_logs.txt"
