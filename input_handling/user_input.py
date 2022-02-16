@@ -21,19 +21,24 @@ class UserInput:
 	@staticmethod
 	def get_user_string_input(prompt_message: str,
 							  options_list: Optional[List[str]] = None,
-							  is_none_allowed: bool = False) -> str:
+							  is_none_allowed: bool = False,
+							  is_case_sensitive: bool = True) -> str:
 		""" Will get a user string input from terminal.
 
 		:param prompt_message: The question to ask the user before accepting the input
 		:param options_list: Optional - a list of values which the input should be one of
 		:param is_none_allowed: Optional - can a null string be accepted, default: False
+		:param is_case_sensitive: Optional - allows to select an option without case-sensitivity, default: True
 		:return: input (str)
 		"""
 		while True:
 			print(prompt_message, f"( Possible value: {options_list} )" if options_list is not None else "")
 			try:
 				if options_list is not None:
-					user_input: str = ValidateUserInput.input_string_from_options_list(options_list=options_list)
+					user_input: str = ValidateUserInput.input_string_from_options_list(
+						options_list=options_list,
+						is_case_sensitive=is_case_sensitive
+					)
 				else:
 					user_input: str = ValidateUserInput.input_string(is_none_allowed=is_none_allowed)
 				return user_input

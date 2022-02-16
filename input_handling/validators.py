@@ -45,16 +45,22 @@ class ValidateUserInput:
 		return input_value
 
 	@staticmethod
-	def input_string_from_options_list(options_list: List[str]) -> str:
+	def input_string_from_options_list(options_list: List[str], is_case_sensitive: bool = True) -> str:
 		""" Accepts input from user. Checks if a string input is one of the given options
 
 		:param options_list: A list of options (str) which can be the input
+		:param is_case_sensitive: Optional - allows to select an option without case-sensitivity, default: True
 		:return: input (str) , in case the input is not one of the options - an exception will raise
 		"""
 		input_value: str = input()
-		if input_value in options_list:
-			return input_value
-		else:
+		try:
+			if not is_case_sensitive:
+				return next((option for option in options_list if input_value.casefold() == option.casefold()))
+			elif input_value in options_list:
+				return input_value
+			else:
+				raise ValidationExceptionInputNotInOptionsList()
+		except (StopIteration, ValidationExceptionInputNotInOptionsList):
 			raise ValidationExceptionInputNotInOptionsList(f"Input given {input_value} "
 														   f"is not in the options list: {options_list}")
 

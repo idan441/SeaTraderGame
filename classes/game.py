@@ -232,7 +232,8 @@ class Game:
 
 		product_name: str = UserInput.get_user_string_input(
 			prompt_message=f"Choose a product name to {action}",
-			options_list=[product.name for product in self.products_list]
+			options_list=[product.name for product in self.products_list],
+			is_case_sensitive=False
 		)
 
 		product_details: PlayerProductInventory = self.player_inventory.get_product_by_name(product_name=product_name)
