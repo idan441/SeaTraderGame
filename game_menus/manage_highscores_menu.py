@@ -15,6 +15,7 @@ class HighScoresMenu:
 	def __init__(self, high_scores: HighScores):
 		"""
 
+		:param high_scores: A HighScores object which will manage the game's high score
 		"""
 		self.high_scores: HighScores = high_scores
 
@@ -40,7 +41,7 @@ class HighScoresMenu:
 			elif option_chosen == 2:
 				self.print_game_high_scores_ordered_by_date()
 			elif option_chosen == 3:
-				print("To add")
+				self.reset_game_high_scores()
 			elif option_chosen == 4:
 				break
 		return None
@@ -74,4 +75,12 @@ class HighScoresMenu:
 		game_results: List[Dict] = [game_result.get_game_result_as_dict() for game_result in game_results_list]
 		print(tabulate(tabular_data=game_results, headers="keys"))
 
+		return None
+
+	def reset_game_high_scores(self) -> None:
+		""" Will reset the game high scores
+
+		:return: None
+		"""
+		self.high_scores.reset_game_high_scores()
 		return None

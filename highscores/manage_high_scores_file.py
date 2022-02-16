@@ -189,6 +189,7 @@ class HighScores:
 		""" Will add a game result to the high-scores. Als will update the high scores file so the result will be shown
 		in future when the game is running.
 
+		:param game_result: A game result object
 		:return: None
 		"""
 		self._game_results.append(game_result)
@@ -196,7 +197,7 @@ class HighScores:
 		return None
 
 	def update_game_results_file(self) -> None:
-		""" Updates the game results in a physical file on the machine so it will be kept for future games.
+		""" Updates the game results in a physical file on the machine's volume so it will be kept for future games.
 
 		:return: None
 		"""
@@ -205,6 +206,18 @@ class HighScores:
 
 	def get_game_results_from_file(self) -> None:
 		""" Will get the history of game scores from the file containing them.
-		File is kept at the computer """
+		File is kept at the computer volume
+
+		:return: None
+		"""
 		self._game_results: List[GameResult] = self.manage_high_scores_file_helper.get_high_scores_from_file()
+		return None
+
+	def reset_game_high_scores(self) -> None:
+		""" Will reset the game results, by emptying the high-score and writing them to the results file.
+
+		:return: None
+		"""
+		self._game_results: List[GameResult] = []
+		self.update_game_results_file()
 		return None
