@@ -1,5 +1,6 @@
-from typing import List, Union
+from typing import List, Dict, Union
 import logging
+from tabulate import tabulate
 from classes.products import Product, PlayersInventory, PlayerProductInventory
 from classes.ship import Ship
 from classes.city_prices import ProductsPricesInAllCities, ProductsPricesInCity
@@ -226,6 +227,7 @@ class Game:
 	def buy_sell_product_menu(self, action: str = Union["buy", "sell"]) -> None:
 		""" Menu for buying or selling a single product from the player's inventory
 
+		:param action: Action to do - "buy" or "sell"
 		:return: None
 		"""
 		player_location: str = self.player.location
@@ -363,11 +365,12 @@ class Game:
 		:return: None
 		"""
 		products_inventory: List[PlayerProductInventory] = self.player_inventory.get_inventory_content()
-
 		print("Current inventory content: ")
-		for product in products_inventory:
-			print(f"{product.product_name}: {product.amount}")
-
+		products_list: List[Dict[str, Union[str, int]]] = [
+			{"product": product.product_name, "amount": product.amount}
+			for product in products_inventory
+		]
+		print(tabulate(tabular_data=products_list, headers="keys"))
 		return None
 
 	def move_to_next_day(self) -> None:
