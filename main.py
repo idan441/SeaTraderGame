@@ -51,6 +51,8 @@ def main():
 		elif menu_option_chosen == 4:
 			break
 
+	return None
+
 
 if __name__ == "__main__":
 	configure_logger()

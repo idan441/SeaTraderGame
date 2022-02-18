@@ -389,7 +389,7 @@ class Game:
 		:return: None
 		"""
 		print(f"Welcome aboard {self.player.name}! You are a captain of a trader ship. "
-			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} days! "
+			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} trading days! "
 			  f"Good luck! ")
 		return None
 
