@@ -26,17 +26,12 @@ def main():
 		menu_option_chosen: int = UserInput.get_user_number_input_for_menu(
 			prompt_message="Choose an option from these: ",
 			options_dict={
-				1: "Introduction & instructions",
-				2: "Start game",
-				3: "High scores",
-				4: "Exit",
+				1: "Start game",
+				2: "High scores",
+				3: "Exit",
 			}
 		)
 		if menu_option_chosen == 1:
-			print("You are a captain of a trading ship, raging the seven seas. "
-				  "Your task is to get as many coins as you can after the trading season ends! "
-				  "Good luck! ")
-		elif menu_option_chosen == 2:
 			player_name: str = UserInput.get_user_string_input(prompt_message="Please enter your name:",
 															   is_none_allowed=False)
 			game = Game(player_name=player_name)
@@ -46,9 +41,9 @@ def main():
 			game_result: GameResult = game.game_results
 			logger.info(f"Finished a game - with results: {game_result}")
 			game_high_scores.add_new_game_result(game_result=game_result)
-		elif menu_option_chosen == 3:
+		elif menu_option_chosen == 2:
 			high_scores_menu.manage_high_scores_menu()
-		elif menu_option_chosen == 4:
+		elif menu_option_chosen == 3:
 			break
 
 	return None

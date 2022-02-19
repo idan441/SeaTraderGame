@@ -8,7 +8,7 @@ from classes.player import Player, PlayersTransaction
 from highscores.game_result import GameResult
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
-	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK
+	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK, SHIP_UPGRADE_TIME_HOURS_REDUCTION, SHIP_UPGRADE_PRICE
 from input_handling.validators import ValidateUserInput
 from input_handling.user_input import UserInput
 from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget, \
@@ -49,7 +49,8 @@ class Game:
 		self.ship = Ship(voyage_time=SHIP_TIME_TO_SAIL_BETWEEN_CITIES,
 						 min_fix_cost_in_game=SHIP_MINIMUM_FIX_COST_IN_GAME,
 						 max_fix_cost_in_game=SHIP_MAXIMUM_FIX_COST_IN_GAME,
-						 chance_for_ship_to_break=CHANCE_FOR_SHIP_TO_BREAK, )
+						 chance_for_ship_to_break=CHANCE_FOR_SHIP_TO_BREAK,
+						 ship_upgrade_time_by_hours=SHIP_UPGRADE_TIME_HOURS_REDUCTION)
 		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
 																   products_in_game=self.products_list)
 		self.product_transactions = PlayersTransaction(player=self.player,
@@ -189,7 +190,7 @@ class Game:
 			elif option_chose == 2:
 				self.fix_ship_menu()
 			elif option_chose == 3:
-				pass
+				self.upgrade_ship_menu()
 			elif option_chose == 4:
 				break
 		return None
@@ -289,6 +290,37 @@ class Game:
 
 		return None
 
+	def upgrade_ship_menu(self) -> None:
+		""" Will allow to upgrade the ship voyage time to be faster
+		As much as the ship is faster then its travelling time will be faster. This will allow player to sail between
+		more destinations in a single trade day.
+
+		:return: None
+		"""
+		print(f"You current speed velocity is {self.ship.voyage_time} hours.")
+
+		if not self.ship.is_ship_upgradeable():
+			print("Ship reached best voyage time available! Can't upgrade the ship anymore! ")
+			return None
+
+		ship_upgrade_price: int = SHIP_UPGRADE_PRICE
+		print(f"You can reduce it by {self.ship.ship_upgrade_time_by_hours} hour "
+			  f"for a payment of {ship_upgrade_price} coins")
+
+		is_to_upgrade_ship: bool = UserInput.get_user_yes_no_input(
+			prompt_message=f"Do you want to upgrade the ship for {ship_upgrade_price} coins?"
+		)
+
+		if is_to_upgrade_ship:
+			try:
+				self.product_transactions.remove_money_from_player(amount_to_remove=ship_upgrade_price)
+				self.ship.upgrade_ship_voyage_time()
+				print(f"Your ship is now upgraded! You can now sail between cities in {self.ship.voyage_time} hours!")
+			except CustomExceptionPlayerHasNotEnoughBudget:
+				print("You don't have enough of money to pay for upgrading your ship!")
+
+		return None
+
 	def fix_ship_menu(self) -> None:
 		""" Print a menu to manage fix of broken ship
 
@@ -305,11 +337,11 @@ class Game:
 		)
 		if is_to_fix:
 			try:
-				self.product_transactions.remove_money_from_player(self.ship.fix_cost)
+				self.product_transactions.remove_money_from_player(amount_to_remove=self.ship.fix_cost)
 				self.ship.fix_ship()
 				print("Your ship is fixed! You can sail again between cities.")
 			except CustomExceptionPlayerHasNotEnoughBudget:
-				print("You don't have enough of money to pay for the cost of fixing ship!")
+				print("You don't have enough of money to pay the cost of fixing ship!")
 
 		return None
 

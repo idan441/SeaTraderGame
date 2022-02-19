@@ -2,9 +2,7 @@ import logging
 import random
 from custom_exceptions.ship_custom_exceptions import CustomExceptionWrongVoyageTimeValueForShip
 
-
 logger = logging.getLogger(__name__)
-
 
 """
 Manages player's ship
@@ -22,6 +20,7 @@ class Ship:
 				 min_fix_cost_in_game: int,
 				 max_fix_cost_in_game: int,
 				 chance_for_ship_to_break: float,
+				 ship_upgrade_time_by_hours: int,
 				 ):
 		"""
 
@@ -29,6 +28,7 @@ class Ship:
 		:param min_fix_cost_in_game: Minimum price for fixing the ship in case it breaks
 		:param max_fix_cost_in_game: Maximum price for fixing the ship in case it breaks
 		:param chance_for_ship_to_break: Chance for the ship to break in every voyage, should be between 0 to 1
+		:param ship_upgrade_time_by_hours: The amount of time to be reduced from the ship voyage time per upgrade
 		"""
 		self._is_ship_broken: bool = False
 		self._voyage_time: int = voyage_time
@@ -37,13 +37,15 @@ class Ship:
 		self.min_fix_cost_in_game: int = min_fix_cost_in_game
 		self.max_fix_cost_in_game: int = max_fix_cost_in_game
 		self.chance_for_ship_to_break: float = chance_for_ship_to_break
+		self.ship_upgrade_time_by_hours: int = ship_upgrade_time_by_hours
 
 		logger.info(f"Initiated player ship with following details - "
 					f"fix cost: {self.fix_cost} "
 					f"min_fix_cost_in_game: {self.min_fix_cost_in_game} "
 					f"max_fix_cost_in_game: {self.max_fix_cost_in_game} "
 					f"chance_for_ship_to_break: {self.chance_for_ship_to_break} "
-					f"voyage time: {self._voyage_time}")
+					f"voyage time: {self._voyage_time} "
+					f"ship upgrade time by hours: {self.ship_upgrade_time_by_hours}")
 
 	def __str__(self) -> str:
 		"""
@@ -94,17 +96,33 @@ class Ship:
 		logger.debug("Ship fixed by player!")
 		return None
 
-	def upgrade_ship_voyage_time(self, new_voyage_time: int) -> None:
+	def upgrade_ship_voyage_time(self) -> None:
 		""" Should upgrade the ship, allowing it to have faster voyage time between different cities.
 
-		:param new_voyage_time: New voyage time - should be smaller than current one
-		:return: None, in case new voyage time is bigger/equals to existing voyage time - an exception will raise
+		Ship upgrade will reduce it's voyage time by a constants time amount defined at self.ship_upgrade_time_by_hours
+
+		Voyage time must always be 1 hour or longer! 0 or negative voyage times are not allowed!
+
+		:return: None, but will raise an exception in case ship can't be further upgraded
 		"""
-		if new_voyage_time < self._voyage_time:
+		if self.is_ship_upgradeable():
+			new_voyage_time: int = self._voyage_time - self.ship_upgrade_time_by_hours
 			self._voyage_time = new_voyage_time
 		else:
-			error_message: str = f"Wrong voyage time given ({new_voyage_time}) - should be"\
-								 f"smaller than current voyage time ({self._voyage_time})"
+			error_message: str = "Failed upgrading the ship! Ship can not be upgrade anymore!" \
+								 f"Current voyage time: {self._voyage_time}"
 			logger.error(error_message)
 			raise CustomExceptionWrongVoyageTimeValueForShip(error_message)
 		return None
+
+	def is_ship_upgradeable(self) -> bool:
+		""" Check if the ship voyage time can be further upgraded. Ship voyage time must always be at least one hour!
+		( As zero time will give player unlimited travels per day and it doesn't make sense! Negative time will
+		elongate the game which doesn't make sense )
+
+		:return: Boolean - true if the ship can be further upgraded
+		"""
+		new_voyage_time: int = self._voyage_time - self.ship_upgrade_time_by_hours
+		if new_voyage_time >= 1:
+			return True
+		return False

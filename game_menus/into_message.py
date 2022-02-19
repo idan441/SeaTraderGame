@@ -18,6 +18,9 @@ def print_game_intro() -> None:
 	print("Welcome to Sea Trader game")
 	print("Sea Trader is a homage to the famous game 'Socher HaYam'")
 	print_ship_art()
+	print("You are a captain of a trading ship, raging the seven seas.\n"
+		  "Your task is to get as many coins as you can after the trading season ends!\n"
+		  "Good luck!\n")
 	logger.debug("Game started - printed intro message")
 	return None
 

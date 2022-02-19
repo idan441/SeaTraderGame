@@ -22,6 +22,8 @@ TOTAL_TRADE_DAYS_IN_A_GAME: int = 3
 
 # Player ship settings -
 SHIP_TIME_TO_SAIL_BETWEEN_CITIES: int = 8
+SHIP_UPGRADE_TIME_HOURS_REDUCTION: int = 2  # Amount of hours to reduce from the sail time ("voyage time") for every upgrade
+SHIP_UPGRADE_PRICE: int = 1000  # Amount of budget to pay in order to upgrade the ship
 SHIP_MINIMUM_FIX_COST_IN_GAME: int = 100
 SHIP_MAXIMUM_FIX_COST_IN_GAME: int = 500
 CHANCE_FOR_SHIP_TO_BREAK: float = 0.05  # Should be between 0 and 1
