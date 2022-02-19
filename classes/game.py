@@ -9,7 +9,6 @@ from highscores.game_result import GameResult
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
 	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK, SHIP_UPGRADE_TIME_HOURS_REDUCTION, SHIP_UPGRADE_PRICE
-from input_handling.validators import ValidateUserInput
 from input_handling.user_input import UserInput
 from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget, \
 	CustomExceptionsTransactionFailNotEnoughItemAmount
@@ -135,14 +134,14 @@ class Game:
 			return None
 
 		while True:
-			print(f"Choose a new destination to sail to: ({self.cities_list})")
-			STAY_HERE_OPTION: List[str] = ["stay here"]
-			new_destination: str = ValidateUserInput.input_string_from_options_list(
+			STAY_HERE_OPTION: List[str] = ["Stay here"]
+			new_destination: str = UserInput.get_user_string_input(
+				prompt_message=f"Choose a new destination to sail to:",
 				options_list=self.cities_list + STAY_HERE_OPTION
 			)
 
 			# Check the player is eligible for the voyage
-			if new_destination == STAY_HERE_OPTION:
+			if new_destination in STAY_HERE_OPTION:
 				print(f"You choose to stay at {self.player.location}")
 				break
 			if new_destination not in self.cities_list:
