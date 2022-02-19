@@ -33,7 +33,6 @@ class Game:
 		self.current_trade_day: int = 1  # First day
 		self.hours_left_for_workday: int = AMOUNT_OF_HOURS_FOR_WORKDAY
 		self.last_trade_day: int = TOTAL_TRADE_DAYS_IN_A_GAME
-		self.time_to_sail_between_cities: int = SHIP_TIME_TO_SAIL_BETWEEN_CITIES
 		self.cities_list: List[str] = CITIES_LIST
 		self.products_list: List[Product] = PRODUCTS_LIST
 
@@ -128,7 +127,7 @@ class Game:
 		"""
 		self.print_player_location_and_time_details()
 
-		if self.hours_left_for_workday < self.time_to_sail_between_cities:
+		if self.hours_left_for_workday < self.ship.voyage_time:
 			print(f"It is already too late! You can't sail today! ")
 			return None
 		elif self.ship.is_ship_broken:
@@ -161,8 +160,8 @@ class Game:
 						  "You need to fix it in order to be able to set sail again!")
 
 				self.player.location = new_destination
-				self.hours_left_for_workday -= self.time_to_sail_between_cities
-				print(f"You sailed to {new_destination} the journey took you {self.time_to_sail_between_cities} hours")
+				self.hours_left_for_workday -= self.ship.voyage_time
+				print(f"You sailed to {new_destination} the journey took you {self.ship.voyage_time} hours")
 
 				break
 
@@ -366,7 +365,7 @@ class Game:
 		:return None
 		"""
 		print(f"You are currently porting at {self.player.location}")
-		print(f"Journey time: {self.time_to_sail_between_cities}")
+		print(f"Journey time: {self.ship.voyage_time}")
 		print(f"left hours for workday: {self.hours_left_for_workday}")
 		return None
 
