@@ -419,8 +419,8 @@ class Game:
 		:return: None
 		"""
 		print(f"Welcome aboard {self.player.name}! You are a captain of a trader ship. "
-			  f"You'r task is to make as much profit as you can in the next {self.last_trade_day} trading days! "
-			  f"Good luck! ")
+			  f"Your task is to make as much profit as you can in the next {self.last_trade_day} trading days!\n"
+			  f"Good luck!\n")
 		return None
 
 	def end_game(self) -> None:
@@ -439,9 +439,9 @@ class Game:
 		"""
 		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
 		print(f"Current budget is {self.player.budget}")
-		print(f"Currently you'r ship is anchoring at {self.player.location}")
+		print(f"Currently your ship is anchoring at {self.player.location}")
 		if self.ship.is_ship_broken:
-			print(f"You'r ship is broken! You need to fix it in order to be able to sail.")
+			print(f"Your ship is broken! You need to fix it in order to be able to sail.")
 		return None
 
 	def player_wishes_to_end_game(self) -> None:
