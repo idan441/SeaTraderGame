@@ -52,7 +52,7 @@ class ProductsPricesInCity:
 	def get_prices_of_all_products_as_dict(self) -> Dict[str, int]:
 		""" Will return a dictionary with all products and their current price.
 
-		:return: Dict[str, any]
+		:return: Dict[str, int] having all products in game and their current price in the city
 		"""
 		prices_dict: Dict[str, int] = {}
 		for product, price in self.products_prices.items():

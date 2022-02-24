@@ -103,7 +103,7 @@ class Game:
 			if option_chose == 1:
 				self.trade_products_menu()
 			elif option_chose == 2:
-				self.print_products_prices()
+				self.print_products_prices_and_player_inventory()
 			elif option_chose == 3:
 				self.print_inventory()
 			elif option_chose == 4:
@@ -207,7 +207,7 @@ class Game:
 				options_dict={
 					1: "Buy products",
 					2: "Sell products",
-					3: "Show inventory",
+					3: "Show player's inventory and current product prices",
 					4: "Show current budget",
 					5: "Back to former menu",
 				}
@@ -218,7 +218,7 @@ class Game:
 			elif option_chose == 2:
 				self.buy_sell_product_menu(action="sell")
 			elif option_chose == 3:
-				self.print_inventory()
+				self.print_products_prices_and_player_inventory()
 			elif option_chose == 4:
 				self.print_current_budget()
 			elif option_chose == 5:
@@ -389,31 +389,34 @@ class Game:
 		print(f"You currently have {self.player.budget} coins")
 		return None
 
-	def print_products_prices(self) -> None:
-		""" Prints the products prices in the current city the player is at
+	def print_products_prices_and_player_inventory(self) -> None:
+		""" Prints the products prices in the current city the player is at, including their possible price range in
+		game and the amount the player hold of them.
 
 		:return: None
 		"""
 		current_city_location: str = self.player.location
 		prices_in_city: ProductsPricesInCity = self.products_prices_in_cities. \
 			get_prices_in_city_by_city_name(current_city_location)
+		products_prices_in_city: Dict[str, int] = prices_in_city.get_prices_of_all_products_as_dict()
+
+		# Order the products and get their amount in player inventory - and print it
+		products_list_to_print: List[Dict[str, Union[str, int]]] = []
+		for product, price in products_prices_in_city.items():
+			product_inventory: PlayerProductInventory = self.player_inventory.get_product_by_name(product_name=product)
+			product_price_details: Product = product_inventory.product
+			products_list_to_print.append(
+				{
+					"Product": product,
+					"Current price": price,
+					"Your inventory": product_inventory.amount,
+					"Total worth": price * product_inventory.amount,
+					"Product price range": f"{product_price_details.min_price}-{product_price_details.max_price}",
+				}
+			)
 
 		print(f"Prices in {current_city_location}:")
-		print(f"{prices_in_city.get_prices_of_all_products_as_dict()}")
-		return None
-
-	def print_inventory(self) -> None:
-		""" Prints the player's inventory
-
-		:return: None
-		"""
-		products_inventory: List[PlayerProductInventory] = self.player_inventory.get_inventory_content()
-		print("Current inventory content: ")
-		products_list: List[Dict[str, Union[str, int]]] = [
-			{"product": product.product_name, "amount": product.amount}
-			for product in products_inventory
-		]
-		print(tabulate(tabular_data=products_list, headers="keys"))
+		print(tabulate(tabular_data=products_list_to_print, headers="keys"))
 		return None
 
 	def move_to_next_day(self) -> None:
