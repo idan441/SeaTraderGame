@@ -8,7 +8,8 @@ from classes.player import Player, PlayersTransaction
 from highscores.game_result import GameResult
 from constants import CITIES_LIST, INITIAL_START_CITY, PRODUCTS_LIST, INITIAL_BUDGET, AMOUNT_OF_HOURS_FOR_WORKDAY, \
 	TOTAL_TRADE_DAYS_IN_A_GAME, SHIP_TIME_TO_SAIL_BETWEEN_CITIES, SHIP_MINIMUM_FIX_COST_IN_GAME, \
-	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK, SHIP_UPGRADE_TIME_HOURS_REDUCTION, SHIP_UPGRADE_PRICE
+	SHIP_MAXIMUM_FIX_COST_IN_GAME, CHANCE_FOR_SHIP_TO_BREAK, SHIP_UPGRADE_TIME_HOURS_REDUCTION, SHIP_UPGRADE_PRICE, \
+	SHIP_UPGRADE_TIME_AT_SHIPYARD
 from input_handling.user_input import UserInput
 from custom_exceptions.product_custom_exceptions import CustomExceptionPlayerHasNotEnoughBudget, \
 	CustomExceptionsTransactionFailNotEnoughItemAmount
@@ -48,7 +49,8 @@ class Game:
 						 min_fix_cost_in_game=SHIP_MINIMUM_FIX_COST_IN_GAME,
 						 max_fix_cost_in_game=SHIP_MAXIMUM_FIX_COST_IN_GAME,
 						 chance_for_ship_to_break=CHANCE_FOR_SHIP_TO_BREAK,
-						 ship_upgrade_time_by_hours=SHIP_UPGRADE_TIME_HOURS_REDUCTION)
+						 ship_upgrade_time_by_hours=SHIP_UPGRADE_TIME_HOURS_REDUCTION,
+						 ship_upgrade_work_time_by_hours=SHIP_UPGRADE_TIME_AT_SHIPYARD)
 		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
 																   products_in_game=self.products_list)
 		self.product_transactions = PlayersTransaction(player=self.player,
@@ -172,6 +174,7 @@ class Game:
 		:return: None
 		"""
 		print("Ship management menu")
+		print("Welcome to the shipyard, how can we help you?")
 		while True:
 			option_chose: int = UserInput.get_user_number_input_for_menu(
 				prompt_message="Choose an option from these: ",
@@ -290,8 +293,12 @@ class Game:
 
 	def upgrade_ship_menu(self) -> None:
 		""" Will allow to upgrade the ship voyage time to be faster
+
 		As much as the ship is faster then its travelling time will be faster. This will allow player to sail between
 		more destinations in a single trade day.
+
+		Upgrading the ship requires work-hours (i.e. time when player can't trade or sail) and costs budget. The values
+		for these parameters are defined at constants.py file
 
 		:return: None
 		"""
@@ -303,15 +310,21 @@ class Game:
 
 		ship_upgrade_price: int = SHIP_UPGRADE_PRICE
 		print(f"You can reduce it by {self.ship.ship_upgrade_time_by_hours} hour "
-			  f"for a payment of {ship_upgrade_price} coins")
+			  f"for a payment of {ship_upgrade_price} coins. "
+			  f"The time taken for upgrading the ship is {self.ship.ship_upgrade_work_time_by_hours} hours. ")
 
 		is_to_upgrade_ship: bool = UserInput.get_user_yes_no_input(
 			prompt_message=f"Do you want to upgrade the ship for {ship_upgrade_price} coins?"
 		)
 
+		if self.hours_left_for_workday < self.ship.ship_upgrade_work_time_by_hours:
+			print(f"It is already too late - not enough work hours to upgrade the ship today! Try tomorrow... ")
+			return None
+
 		if is_to_upgrade_ship:
 			try:
 				self.product_transactions.remove_money_from_player(amount_to_remove=ship_upgrade_price)
+				self.hours_left_for_workday -= self.ship.ship_upgrade_work_time_by_hours
 				self.ship.upgrade_ship_voyage_time()
 				print(f"Your ship is now upgraded! You can now sail between cities in {self.ship.voyage_time} hours!")
 			except CustomExceptionPlayerHasNotEnoughBudget:

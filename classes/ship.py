@@ -21,6 +21,7 @@ class Ship:
 				 max_fix_cost_in_game: int,
 				 chance_for_ship_to_break: float,
 				 ship_upgrade_time_by_hours: int,
+				 ship_upgrade_work_time_by_hours: int,
 				 ):
 		"""
 
@@ -29,6 +30,9 @@ class Ship:
 		:param max_fix_cost_in_game: Maximum price for fixing the ship in case it breaks
 		:param chance_for_ship_to_break: Chance for the ship to break in every voyage, should be between 0 to 1
 		:param ship_upgrade_time_by_hours: The amount of time to be reduced from the ship voyage time per upgrade
+		:param ship_upgrade_work_time_by_hours: The amount of time which takes to upgrade a ship. That is the time that
+												it takes the shipyard to upgrade the ship. Player can't use the ship
+												while upgrading.
 		"""
 		self._is_ship_broken: bool = False
 		self._voyage_time: int = voyage_time
@@ -38,6 +42,7 @@ class Ship:
 		self.max_fix_cost_in_game: int = max_fix_cost_in_game
 		self.chance_for_ship_to_break: float = chance_for_ship_to_break
 		self.ship_upgrade_time_by_hours: int = ship_upgrade_time_by_hours
+		self.ship_upgrade_work_time_by_hours: int = ship_upgrade_work_time_by_hours
 
 		logger.info(f"Initiated player ship with following details - "
 					f"fix cost: {self.fix_cost} "
@@ -45,7 +50,8 @@ class Ship:
 					f"max_fix_cost_in_game: {self.max_fix_cost_in_game} "
 					f"chance_for_ship_to_break: {self.chance_for_ship_to_break} "
 					f"voyage time: {self._voyage_time} "
-					f"ship upgrade time by hours: {self.ship_upgrade_time_by_hours}")
+					f"ship upgrade time by hours: {self.ship_upgrade_time_by_hours}"
+					f"ship upgrade process time by hours: {self.ship_upgrade_work_time_by_hours}")
 
 	def __str__(self) -> str:
 		"""
