@@ -41,21 +41,27 @@ class Game:
 		self.is_user_requested_to_finish_game: bool = False  # Set in case player wants to finish game immediately
 
 		# Set objects used to represent the player and game environment
-		self.player = Player(name=player_name,
-							 initial_budget=INITIAL_BUDGET,
-							 initial_location=INITIAL_START_CITY)
-		self.player_inventory = PlayersInventory(products_list_in_game=PRODUCTS_LIST)
-		self.ship = Ship(voyage_time=SHIP_TIME_TO_SAIL_BETWEEN_CITIES,
-						 min_fix_cost_in_game=SHIP_MINIMUM_FIX_COST_IN_GAME,
-						 max_fix_cost_in_game=SHIP_MAXIMUM_FIX_COST_IN_GAME,
-						 chance_for_ship_to_break=CHANCE_FOR_SHIP_TO_BREAK,
-						 ship_upgrade_time_by_hours=SHIP_UPGRADE_TIME_HOURS_REDUCTION,
-						 ship_upgrade_work_time_by_hours=SHIP_UPGRADE_TIME_AT_SHIPYARD)
-		self.products_prices_in_cities = ProductsPricesInAllCities(cities_names_in_game=self.cities_list,
-																   products_in_game=self.products_list)
-		self.product_transactions = PlayersTransaction(player=self.player,
-													   player_inventory=self.player_inventory,
-													   prices_in_city=self.products_prices_in_cities)
+		self.player = Player(
+			name=player_name,
+			initial_budget=INITIAL_BUDGET,
+			initial_location=INITIAL_START_CITY)
+		self.player_inventory = PlayersInventory(
+			products_list_in_game=PRODUCTS_LIST)
+		self.ship = Ship(
+			voyage_time=SHIP_TIME_TO_SAIL_BETWEEN_CITIES,
+			min_fix_cost_in_game=SHIP_MINIMUM_FIX_COST_IN_GAME,
+			max_fix_cost_in_game=SHIP_MAXIMUM_FIX_COST_IN_GAME,
+			chance_for_ship_to_break=CHANCE_FOR_SHIP_TO_BREAK,
+			ship_upgrade_time_by_hours=SHIP_UPGRADE_TIME_HOURS_REDUCTION,
+			ship_upgrade_work_time_by_hours=SHIP_UPGRADE_TIME_AT_SHIPYARD)
+
+		self.products_prices_in_cities = ProductsPricesInAllCities(
+			cities_names_in_game=self.cities_list,
+			products_in_game=self.products_list)
+		self.product_transactions = PlayersTransaction(
+			player=self.player,
+			player_inventory=self.player_inventory,
+			prices_in_city=self.products_prices_in_cities)
 
 	def start_game(self) -> None:
 		""" Will start a game and manage it until the end
@@ -72,7 +78,6 @@ class Game:
 				print("This is the last day of trade! Make sure to sell any products left in your ship!")
 				self.is_last_trade_day = True
 
-			self.print_current_game_status()
 			self.manage_trade_day_menu()
 			self.move_to_next_day()
 
@@ -85,16 +90,18 @@ class Game:
 		:return: None
 		"""
 		print("It's morning of a new trade day. ")
+		self.print_current_game_status()
+
 		while True:
 			option_chose: int = UserInput.get_user_number_input_for_menu(
 				prompt_message="Choose an option from these: ",
 				options_dict={
 					1: "Trade products",
-					2: "Show products price",
-					3: "Show inventory",
-					4: "Show budget",
-					5: "Sail to a new destination",
-					6: "Ship status (fix/improve ship)",
+					2: "Show products price and current inventory",
+					3: "Show budget",
+					4: "Sail to a new destination",
+					5: "Game status (location, work days left, trade day number, budget)",
+					6: "Ship status (fix / upgrade ship)",
 					7: "Finish trade day",
 					8: "End game",
 				}
@@ -105,11 +112,11 @@ class Game:
 			elif option_chose == 2:
 				self.print_products_prices_and_player_inventory()
 			elif option_chose == 3:
-				self.print_inventory()
-			elif option_chose == 4:
 				self.print_current_budget()
-			elif option_chose == 5:
+			elif option_chose == 4:
 				self.sail_to_new_destination_menu()
+			elif option_chose == 5:
+				self.print_current_game_status()
 			elif option_chose == 6:
 				self.ship_management_menu()
 			elif option_chose == 7:
@@ -139,7 +146,8 @@ class Game:
 			STAY_HERE_OPTION: List[str] = ["Stay here"]
 			new_destination: str = UserInput.get_user_string_input(
 				prompt_message=f"Choose a new destination to sail to:",
-				options_list=self.cities_list + STAY_HERE_OPTION
+				options_list=self.cities_list + STAY_HERE_OPTION,
+				is_case_sensitive=False,
 			)
 
 			# Check the player is eligible for the voyage
@@ -449,13 +457,15 @@ class Game:
 		return None
 
 	def print_current_game_status(self) -> None:
-		""" Print the current status of the game including the player's details
+		""" Print the current status of the game including: trade day, player's budget, player's location, work hours
+		left for the day and the ship status if it is broken.
 
 		:return: None
 		"""
-		print(f"Trade day is {self.current_trade_day}/{self.last_trade_day}")
-		print(f"Current budget is {self.player.budget}")
-		print(f"Currently your ship is anchoring at {self.player.location}")
+		print(f"Currently your ship is anchoring at {self.player.location}. \n"
+			  f"Trade day is {self.current_trade_day}/{self.last_trade_day} "
+			  f"and there are {self.hours_left_for_workday} work hours left. \n"
+			  f"Current budget is {self.player.budget} coins. ")
 		if self.ship.is_ship_broken:
 			print(f"Your ship is broken! You need to fix it in order to be able to sail.")
 		return None
